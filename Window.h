@@ -23,5 +23,9 @@ namespace OpenGLBootstrap {
 		int ShowStyle;
 
 		LRESULT CALLBACK MessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam);
+
+		unsigned __int64 TimeBase;
+		unsigned __int64 TimeDelta;
+		unsigned __int64 TimeFrequency;
 	};
 }

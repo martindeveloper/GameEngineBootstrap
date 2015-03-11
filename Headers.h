@@ -6,6 +6,8 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include <exception>
+#include <cmath>
+#include <iostream>
 
 #include "IWindowRenderer.h"
 #include "OpenGLRenderer.h"

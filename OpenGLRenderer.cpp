@@ -37,14 +37,33 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext)
 	{
 		DWORD error = GetLastError();
 		OutputDebugStringA("Can not make current OpenGL context");
+		DebugBreak();
 		exit(1);
 	}
+
+	// Init GLEW
+	static const int glewExperimental = GL_TRUE;
+	GLenum glewError = glewInit();
+
+	if (GLEW_OK != glewError)
+	{
+		OutputDebugStringA((char*)glewGetErrorString(glewError));
+		DebugBreak();
+		exit(1);
+	}
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	
+	// Accept fragment if it closer to the camera than the former one
+	glDepthFunc(GL_LESS);
 }
 
-void OpenGLRenderer::ClearWindow()
+void OpenGLRenderer::ClearWindow(double deltaTime)
 {
-	glClearColor(0, .5f, 0, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	const GLfloat color[] = { sin(deltaTime) * 0.5f + 0.5f, cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
+
+	glClearBufferfv(GL_COLOR, 0, color);
 
 	if (glGetError() != GL_NO_ERROR)
 	{
@@ -52,6 +71,6 @@ void OpenGLRenderer::ClearWindow()
 	}
 }
 
-void OpenGLRenderer::Render()
+void OpenGLRenderer::Render(double deltaTime)
 {
 }

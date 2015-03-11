@@ -10,6 +10,9 @@ Window::Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, in
 
 	ApplicationInstance = hInstance;
 	ShowStyle = nShowCmd;
+
+	QueryPerformanceFrequency((LARGE_INTEGER*)&TimeFrequency);
+	QueryPerformanceCounter((LARGE_INTEGER*)&TimeBase);
 }
 
 int Window::Create(const int Width, const int Height, wchar_t const *Title)
@@ -49,8 +52,13 @@ int Window::Create(const int Width, const int Height, wchar_t const *Title)
 
 		try
 		{
-			Renderer->ClearWindow();
-			Renderer->Render();
+			unsigned __int64 time;
+			QueryPerformanceCounter((LARGE_INTEGER*)&time);
+
+			double deltaTime = (double)(time - TimeBase)*(1.0 / (double)TimeFrequency);
+
+			Renderer->ClearWindow(deltaTime);
+			Renderer->Render(deltaTime);
 
 			SwapBuffers(WindowDeviceContext);
 		}

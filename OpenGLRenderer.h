@@ -7,8 +7,8 @@ namespace OpenGLBootstrap{
 	public:
 		OpenGLRenderer();
 		void BeforeStart(HDC WindowDeviceContext) override;
-		void ClearWindow() override;
-		void Render() override;
+		void ClearWindow(double deltaTime) override;
+		void Render(double deltaTime) override;
 		virtual ~OpenGLRenderer();
 	};
 }
