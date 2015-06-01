@@ -16,7 +16,7 @@ D3D11Renderer::~D3D11Renderer()
 	DeviceContext->Release();
 }
 
-void D3D11Renderer::BeforeStart(HDC WindowDeviceContext)
+void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDescription;
 
@@ -32,6 +32,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext)
 	swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDescription.OutputWindow = windowHandle;
 	swapChainDescription.SampleDesc.Count = 4; // multi-samples
+	swapChainDescription.Windowed = isWindowed;
 	swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	swapChainDescription.BufferDesc.Width = windowRectangle.right;
 	swapChainDescription.BufferDesc.Height = windowRectangle.bottom;

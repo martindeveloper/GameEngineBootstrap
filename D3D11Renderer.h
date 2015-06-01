@@ -19,7 +19,7 @@ namespace RendererBootstrap{
 
 	public:
 		D3D11Renderer();
-		void BeforeStart(HDC WindowDeviceContext) override;
+		void BeforeStart(HDC WindowDeviceContext, bool isWindowed) override;
 		void ClearWindow(double deltaTime) override;
 		void Render(double deltaTime) override;
 		virtual ~D3D11Renderer();

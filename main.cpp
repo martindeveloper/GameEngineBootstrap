@@ -7,7 +7,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RendererBootstrap::Window *Window = new RendererBootstrap::Window(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 	Window->SetRenderer(Renderer);
 
-	int result = Window->Create(1920, 1080, L"Cool OpenGL Window on Windows", true);
+	int result = Window->Create(1920, 1080, L"Cool OpenGL Window on Windows", false);
 
 	delete Window;
 

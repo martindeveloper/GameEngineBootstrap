@@ -10,7 +10,7 @@ OpenGLRenderer::~OpenGLRenderer()
 {
 }
 
-void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext)
+void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 {
 	// Set pixel format
 	PIXELFORMATDESCRIPTOR OpenGLPixelFormatDescriptor;

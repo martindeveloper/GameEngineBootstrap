@@ -75,7 +75,7 @@ int Window::Create(const int Width, const int Height, wchar_t const *Title, bool
 
 	ShowWindow(WindowHandle, ShowStyle);
 
-	Renderer->BeforeStart(WindowDeviceContext);
+	Renderer->BeforeStart(WindowDeviceContext, !isFullscreen);
 
 	// Windows Message loop
 	MSG Message = { 0 };

@@ -6,7 +6,7 @@ namespace RendererBootstrap{
 	{
 	public:
 		OpenGLRenderer();
-		void BeforeStart(HDC WindowDeviceContext) override;
+		void BeforeStart(HDC WindowDeviceContext, bool isWindowed) override;
 		void ClearWindow(double deltaTime) override;
 		void Render(double deltaTime) override;
 		virtual ~OpenGLRenderer();
