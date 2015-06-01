@@ -2,7 +2,7 @@
 
 #include "Headers.h"
 
-namespace OpenGLBootstrap {
+namespace RendererBootstrap {
 	class Window
 	{
 	public:
@@ -10,7 +10,7 @@ namespace OpenGLBootstrap {
 
 		Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 		~Window();
-		int Create(const int Width, const int Height, wchar_t const *Title);
+		int Create(const int Width, const int Height, wchar_t const *Title, bool isFullscreen);
 		void SetRenderer(IWindowRenderer *NewRenderer);
 		static LRESULT CALLBACK StaticMessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam);
 

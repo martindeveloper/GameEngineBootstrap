@@ -2,12 +2,12 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
-	OpenGLBootstrap::IWindowRenderer *Renderer = new OpenGLBootstrap::OpenGLRenderer();
+	RendererBootstrap::IWindowRenderer *Renderer = new RendererBootstrap::D3D11Renderer();
 
-	OpenGLBootstrap::Window *Window = new OpenGLBootstrap::Window(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
+	RendererBootstrap::Window *Window = new RendererBootstrap::Window(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 	Window->SetRenderer(Renderer);
 
-	int result = Window->Create(1024, 768, L"Cool OpenGL Window on Windows");
+	int result = Window->Create(1920, 1080, L"Cool OpenGL Window on Windows", true);
 
 	delete Window;
 

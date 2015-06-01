@@ -2,7 +2,7 @@
 
 #include "Headers.h"
 
-namespace OpenGLBootstrap {
+namespace RendererBootstrap {
 	class IWindowRenderer
 	{
 	public:

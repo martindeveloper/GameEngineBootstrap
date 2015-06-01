@@ -1,6 +1,6 @@
 #include "OpenGLRenderer.h"
 
-using namespace OpenGLBootstrap;
+using namespace RendererBootstrap;
 
 OpenGLRenderer::OpenGLRenderer()
 {
@@ -49,7 +49,8 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext)
 	{
 		OutputDebugStringA((char*)glewGetErrorString(glewError));
 		DebugBreak();
-		exit(1);
+
+		exit(ERROR_INVALID_FUNCTION);
 	}
 
 	// Enable depth test
@@ -61,7 +62,7 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext)
 
 void OpenGLRenderer::ClearWindow(double deltaTime)
 {
-	const GLfloat color[] = { sin(deltaTime) * 0.5f + 0.5f, cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
+	const GLfloat color[] = { sin(deltaTime) * 0.5 + 0.5, cos(deltaTime) * 0.5 + 0.5, 0.0, 1.0 };
 
 	glClearBufferfv(GL_COLOR, 0, color);
 

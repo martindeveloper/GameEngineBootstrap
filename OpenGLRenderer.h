@@ -1,7 +1,7 @@
 #pragma once
 #include "Headers.h"
 
-namespace OpenGLBootstrap{
+namespace RendererBootstrap{
 	class OpenGLRenderer : public IWindowRenderer
 	{
 	public:

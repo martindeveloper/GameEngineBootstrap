@@ -11,4 +11,5 @@
 
 #include "IWindowRenderer.h"
 #include "OpenGLRenderer.h"
+#include "D3D11Renderer.h"
 #include "Window.h"
