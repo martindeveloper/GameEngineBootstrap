@@ -3,6 +3,12 @@
 #include "Headers.h"
 
 namespace RendererBootstrap {
+	struct WindowParameters
+	{
+		int Width;
+		int Height;
+	};
+
 	class Window
 	{
 	public:

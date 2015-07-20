@@ -65,6 +65,11 @@ void D3D11Renderer::ClearWindow(double deltaTime)
 	DeviceContext->ClearRenderTargetView(BackBuffer, color);
 }
 
+void D3D11Renderer::Update(double deltaTime)
+{
+
+}
+
 void D3D11Renderer::Render(double deltaTime)
 {
 	SwapChain->Present(0, 0);

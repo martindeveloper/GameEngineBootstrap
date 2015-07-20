@@ -1,4 +1,4 @@
-#include "OpenGLRenderer.h"
+﻿#include "OpenGLRenderer.h"
 
 using namespace RendererBootstrap;
 
@@ -55,9 +55,32 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
-	
+
 	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
+
+	GLint majorVersion;
+	GLint minorVersion;
+
+	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+
+	// Create VAO and VBO
+	PrepareBuffers();
+
+	// Triangle VAO
+	TrianglePrimitive triangle;
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), &triangle, GL_STATIC_DRAW);
+
+	// Create shaders
+	CreateShaders();
+
+	// Unbind buffers
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
+	glBindVertexArray(NULL);
 }
 
 void OpenGLRenderer::ClearWindow(double deltaTime)
@@ -72,6 +95,128 @@ void OpenGLRenderer::ClearWindow(double deltaTime)
 	}
 }
 
+void OpenGLRenderer::Update(double deltaTime)
+{
+
+}
+
 void OpenGLRenderer::Render(double deltaTime)
 {
+	glViewport(0, 0, 1024, 768);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glUseProgram(TriangleProgramID);
+
+	GLint attributeVertexPosition = glGetAttribLocation(TriangleProgramID, "vertexPosition");
+	GLint attributeVertexColor = glGetAttribLocation(TriangleProgramID, "vertexColor");
+
+	const GLsizei stride = 7 * sizeof(GLfloat);
+
+	glVertexAttribPointer(attributeVertexPosition, 3, GL_FLOAT, GL_FALSE, stride, 0); // X, Y, Z
+	glVertexAttribPointer(attributeVertexColor, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(3 * sizeof(GLfloat))); // R, G, B, A
+
+	glEnableVertexAttribArray(attributeVertexPosition);
+	glEnableVertexAttribArray(attributeVertexColor);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glDisableVertexAttribArray(attributeVertexPosition);
+	glDisableVertexAttribArray(attributeVertexColor);
+
+	GLenum err = glGetError();
+
+	if (err != GL_NO_ERROR)
+	{
+		OutputDebugStringW(L"My output string.");
+	}
+}
+
+GLint RendererBootstrap::OpenGLRenderer::CompileShader(const char* path, GLenum type)
+{
+	// Create files helper class to read file
+	FileSystem::File file(path);
+
+	// Variables to debug of shader compilation
+	GLint compilationResult = GL_FALSE;
+	int compilationLogLength;
+
+	// Create shader
+	GLuint shaderID = glCreateShader(type);
+
+	// Read file
+	std::string shaderString = file.GetContent();
+	const char* shaderCharPointer = shaderString.c_str();
+
+	// Pass source code of shader and compile it
+	glShaderSource(shaderID, 1, &shaderCharPointer, NULL);
+	glCompileShader(shaderID);
+
+	// Check compilation
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compilationResult);
+	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &compilationLogLength);
+	std::vector<char> shaderErrorMessage(compilationLogLength);
+	glGetShaderInfoLog(shaderID, compilationLogLength, NULL, &shaderErrorMessage[0]);
+
+	// Output debug message
+	std::cout << "Shader #" << shaderID << " compilation result: " << &shaderErrorMessage[0] << std::endl;
+	OutputDebugStringA(&shaderErrorMessage[0]);
+
+	return shaderID;
+}
+
+GLint RendererBootstrap::OpenGLRenderer::CreateShaderProgram(GLint vertexShader, GLint fragmentShader)
+{
+	GLint isLinked = GL_FALSE;
+	GLuint shaderProgram = glCreateProgram();
+
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, (int *)&isLinked);
+
+	if (isLinked == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &maxLength);
+
+		std::vector<GLchar> infoLog(maxLength);
+		glGetProgramInfoLog(shaderProgram, maxLength, &maxLength, &infoLog[0]);
+
+		// Output debug message
+		std::cerr << "Shader program #" << shaderProgram << " link result: " << &infoLog[0] << std::endl;
+		OutputDebugStringA(&infoLog[0]);
+
+		glDeleteProgram(shaderProgram);
+	}
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	return shaderProgram;
+}
+
+void RendererBootstrap::OpenGLRenderer::PrepareBuffers()
+{
+	// VAO
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	// Unbind buffers
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
+	glBindVertexArray(NULL);
+}
+
+void RendererBootstrap::OpenGLRenderer::CreateShaders()
+{
+	// Shaders
+	GLuint vertexShader = CompileShader("TriangleVertex.glsl", GL_VERTEX_SHADER);
+	GLuint fragmentShader = CompileShader("TriangleFragment.glsl", GL_FRAGMENT_SHADER);
+
+	TriangleProgramID = CreateShaderProgram(vertexShader, fragmentShader);
 }

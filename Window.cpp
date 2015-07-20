@@ -2,7 +2,7 @@
 
 using namespace RendererBootstrap;
 
-static Window *WindowInstanceSingleton = nullptr;
+static Window* WindowInstanceSingleton = nullptr;
 
 Window::Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -15,7 +15,7 @@ Window::Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, in
 	QueryPerformanceCounter((LARGE_INTEGER*)&TimeBase);
 }
 
-int Window::Create(const int Width, const int Height, wchar_t const *Title, bool isFullscreen)
+int Window::Create(const int Width, const int Height, const wchar_t *Title, bool isFullscreen)
 {
 	WNDCLASSEX WindowClassHandle;
 	ZeroMemory(&WindowClassHandle, sizeof(WNDCLASSEX));
@@ -38,12 +38,6 @@ int Window::Create(const int Width, const int Height, wchar_t const *Title, bool
 
 	windowExtendedStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 	windowStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-
-	RECT windowRect;
-	windowRect.left = (long)0;
-	windowRect.right = (long)Width;
-	windowRect.top = (long)0;
-	windowRect.bottom = (long)Height;
 
 	// Fullscreen
 	if(isFullscreen)
@@ -68,8 +62,6 @@ int Window::Create(const int Width, const int Height, wchar_t const *Title, bool
 		windowExtendedStyle = WS_EX_APPWINDOW;
 		windowStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	}
-
-	//AdjustWindowRectEx(&windowRect, windowStyle, FALSE, windowExtendedStyle);
 
 	WindowHandle = CreateWindowEx(windowExtendedStyle, L"WindowsOpenGL", Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
 
@@ -96,6 +88,8 @@ int Window::Create(const int Width, const int Height, wchar_t const *Title, bool
 			double deltaTime = (double)(time - TimeBase)*(1.0 / (double)TimeFrequency);
 
 			Renderer->ClearWindow(deltaTime);
+
+			Renderer->Update(deltaTime);
 			Renderer->Render(deltaTime);
 
 			SwapBuffers(WindowDeviceContext);
