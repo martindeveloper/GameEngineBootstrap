@@ -13,6 +13,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+#include <assert.h>
 
 #include <string>
 #include <fstream>
@@ -20,8 +21,12 @@
 
 #include "ColorRGBA.h"
 #include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4x4.h"
 #include "Vertex.h"
 #include "TrianglePrimitive.h"
+#include "CubePrimitive.h"
+#include "ConstantBuffer.h"
 
 #include "IWindowRenderer.h"
 #include "OpenGLRenderer.h"

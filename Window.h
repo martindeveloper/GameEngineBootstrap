@@ -2,7 +2,7 @@
 
 #include "Headers.h"
 
-namespace RendererBootstrap {
+namespace WindowBootstrap {
 	struct WindowParameters
 	{
 		int Width;
@@ -17,11 +17,11 @@ namespace RendererBootstrap {
 		Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 		~Window();
 		int Create(const int Width, const int Height, wchar_t const *Title, bool isFullscreen);
-		void SetRenderer(IWindowRenderer *NewRenderer);
+		void SetRenderer(Renderer::IWindowRenderer *NewRenderer);
 		static LRESULT CALLBACK StaticMessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam);
 
 	private:
-		IWindowRenderer *Renderer;
+		Renderer::IWindowRenderer *Renderer;
 
 		HDC WindowDeviceContext;
 		HWND WindowHandle;

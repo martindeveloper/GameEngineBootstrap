@@ -1,6 +1,6 @@
 ﻿#include "OpenGLRenderer.h"
 
-using namespace RendererBootstrap;
+using namespace Renderer;
 
 OpenGLRenderer::OpenGLRenderer()
 {
@@ -55,25 +55,21 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
 
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LEQUAL);
-
-	GLint majorVersion;
-	GLint minorVersion;
-
-	glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-	glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+	// Enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
 
 	// Create VAO and VBO
 	PrepareBuffers();
 
 	// Triangle VAO
-	TrianglePrimitive triangle;
+	Triangle = new Graphic::Primitive::TrianglePrimitive();
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), &triangle, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(*Triangle), Triangle, GL_DYNAMIC_DRAW);
 
 	// Create shaders
 	CreateShaders();
@@ -85,7 +81,7 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 
 void OpenGLRenderer::ClearWindow(double deltaTime)
 {
-	const GLfloat color[] = { sin(deltaTime) * 0.5 + 0.5, cos(deltaTime) * 0.5 + 0.5, 0.0, 1.0 };
+	const GLfloat color[] = { (float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
 
 	glClearBufferfv(GL_COLOR, 0, color);
 
@@ -107,10 +103,10 @@ void OpenGLRenderer::Render(double deltaTime)
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-	glUseProgram(TriangleProgramID);
+	glUseProgram(ShaderProgramID);
 
-	GLint attributeVertexPosition = glGetAttribLocation(TriangleProgramID, "vertexPosition");
-	GLint attributeVertexColor = glGetAttribLocation(TriangleProgramID, "vertexColor");
+	GLint attributeVertexPosition = glGetAttribLocation(ShaderProgramID, "vertexPosition");
+	GLint attributeVertexColor = glGetAttribLocation(ShaderProgramID, "vertexColor");
 
 	const GLsizei stride = 7 * sizeof(GLfloat);
 
@@ -120,7 +116,38 @@ void OpenGLRenderer::Render(double deltaTime)
 	glEnableVertexAttribArray(attributeVertexPosition);
 	glEnableVertexAttribArray(attributeVertexColor);
 
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	// TODO: Remove this code below. Only for rotation testing
+	// Frame counter uniform block
+	{
+		static unsigned __int32 frameCounter = 0;
+
+		GLint frameCounterUniform = glGetUniformLocation(ShaderProgramID, "frameNumber");
+
+		assert(frameCounterUniform >= 0);
+
+		glUniform1f(frameCounterUniform, (float)frameCounter);
+
+		frameCounter++;
+	}
+	// End of frame counter uniform
+
+	// MVP block
+	{
+		GLint mvpUniform = glGetUniformLocation(ShaderProgramID, "ModelViewProjectionMatrix");
+
+		assert(mvpUniform >= 0);
+
+		Math::Matrix4x4 projectionMatrix(Math::Vector3<float>(.8f, .3f, 1.0f));
+		Math::Matrix4x4 viewMatrix;
+		Math::Matrix4x4 modelMatrix;
+
+		const Math::Matrix4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+
+		glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&mvpMatrix);
+	}
+	// End of MVP block
+
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glDisableVertexAttribArray(attributeVertexPosition);
 	glDisableVertexAttribArray(attributeVertexColor);
@@ -129,11 +156,13 @@ void OpenGLRenderer::Render(double deltaTime)
 
 	if (err != GL_NO_ERROR)
 	{
-		OutputDebugStringW(L"My output string.");
+		const char* message = (const char*)gluErrorString(err);
+		OutputDebugStringA(message);
+		DebugBreak();
 	}
 }
 
-GLint RendererBootstrap::OpenGLRenderer::CompileShader(const char* path, GLenum type)
+GLint OpenGLRenderer::CompileShader(const char* path, GLenum type)
 {
 	// Create files helper class to read file
 	FileSystem::File file(path);
@@ -166,7 +195,7 @@ GLint RendererBootstrap::OpenGLRenderer::CompileShader(const char* path, GLenum 
 	return shaderID;
 }
 
-GLint RendererBootstrap::OpenGLRenderer::CreateShaderProgram(GLint vertexShader, GLint fragmentShader)
+GLint OpenGLRenderer::CreateShaderProgram(GLint vertexShader, GLint fragmentShader)
 {
 	GLint isLinked = GL_FALSE;
 	GLuint shaderProgram = glCreateProgram();
@@ -198,7 +227,7 @@ GLint RendererBootstrap::OpenGLRenderer::CreateShaderProgram(GLint vertexShader,
 	return shaderProgram;
 }
 
-void RendererBootstrap::OpenGLRenderer::PrepareBuffers()
+void OpenGLRenderer::PrepareBuffers()
 {
 	// VAO
 	glGenVertexArrays(1, &VAO);
@@ -212,11 +241,11 @@ void RendererBootstrap::OpenGLRenderer::PrepareBuffers()
 	glBindVertexArray(NULL);
 }
 
-void RendererBootstrap::OpenGLRenderer::CreateShaders()
+void OpenGLRenderer::CreateShaders()
 {
 	// Shaders
-	GLuint vertexShader = CompileShader("TriangleVertex.glsl", GL_VERTEX_SHADER);
-	GLuint fragmentShader = CompileShader("TriangleFragment.glsl", GL_FRAGMENT_SHADER);
+	GLuint vertexShader = CompileShader("RotationVertex.glsl", GL_VERTEX_SHADER);
+	GLuint fragmentShader = CompileShader("SolidColorFragment.glsl", GL_FRAGMENT_SHADER);
 
-	TriangleProgramID = CreateShaderProgram(vertexShader, fragmentShader);
+	ShaderProgramID = CreateShaderProgram(vertexShader, fragmentShader);
 }

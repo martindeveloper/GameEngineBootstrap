@@ -1,6 +1,6 @@
 #include "Window.h"
 
-using namespace RendererBootstrap;
+using namespace WindowBootstrap;
 
 static Window* WindowInstanceSingleton = nullptr;
 
@@ -144,7 +144,7 @@ LRESULT CALLBACK Window::MessageLoopCallback(HWND WindowHandle, UINT Message, WP
 	return 0;
 }
 
-void Window::SetRenderer(IWindowRenderer *NewRenderer)
+void Window::SetRenderer(Renderer::IWindowRenderer *NewRenderer)
 {
 	delete Renderer;
 

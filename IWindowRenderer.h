@@ -2,7 +2,7 @@
 
 #include "Headers.h"
 
-namespace RendererBootstrap {
+namespace Renderer {
 	class IWindowRenderer
 	{
 	public:

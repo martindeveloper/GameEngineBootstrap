@@ -4,9 +4,12 @@
 #include "Vector3.h"
 
 #pragma pack(push, 1)
-struct Vertex
+namespace Graphic
 {
-	Vector3 Position;
-	ColorRGBA Color;
+	struct Vertex
+	{
+		Math::Vector3<float> Position;
+		Graphic::ColorRGBA Color;
+	};
 };
 #pragma pack(pop)

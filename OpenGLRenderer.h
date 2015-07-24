@@ -6,7 +6,7 @@
 #pragma comment(lib, "glew32")
 #pragma comment(lib, "opengl32")
 
-namespace RendererBootstrap{
+namespace Renderer{
 	class OpenGLRenderer : public IWindowRenderer
 	{
 	public:
@@ -20,12 +20,16 @@ namespace RendererBootstrap{
 	private:
 		GLuint VBO;
 		GLuint VAO;
-		GLuint TriangleProgramID;
+		GLuint ShaderProgramID;
 
 		GLint CompileShader(const char* path, GLenum type);
 		GLint CreateShaderProgram(GLint vertexShader, GLint fragmentShader);
 
 		void PrepareBuffers();
 		void CreateShaders();
+
+		// TODO: Delete this temp stuff
+		Graphic::Primitive::TrianglePrimitive* Triangle;
+		Graphic::Primitive::CubePrimitive* Cube;
 	};
 }
