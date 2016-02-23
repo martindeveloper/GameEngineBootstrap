@@ -10,7 +10,7 @@ OpenGLRenderer::~OpenGLRenderer()
 {
 }
 
-void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
+void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 {
 	// Set pixel format
 	PIXELFORMATDESCRIPTOR OpenGLPixelFormatDescriptor;
@@ -79,7 +79,7 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 	glBindVertexArray(NULL);
 }
 
-void OpenGLRenderer::ClearWindow(double deltaTime)
+void OpenGLRenderer::ClearWindow(const double deltaTime)
 {
 	const GLfloat color[] = { (float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
 
@@ -91,12 +91,12 @@ void OpenGLRenderer::ClearWindow(double deltaTime)
 	}
 }
 
-void OpenGLRenderer::Update(double deltaTime)
+void OpenGLRenderer::Update(const double deltaTime)
 {
 
 }
 
-void OpenGLRenderer::Render(double deltaTime)
+void OpenGLRenderer::Render(const double deltaTime)
 {
 	glViewport(0, 0, 1024, 768);
 

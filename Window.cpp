@@ -15,7 +15,7 @@ Window::Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, in
 	QueryPerformanceCounter((LARGE_INTEGER*)&TimeBase);
 }
 
-int Window::Create(const int Width, const int Height, const wchar_t *Title, bool isFullscreen)
+int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFullscreen)
 {
 	WNDCLASSEX WindowClassHandle;
 	ZeroMemory(&WindowClassHandle, sizeof(WNDCLASSEX));
@@ -26,7 +26,7 @@ int Window::Create(const int Width, const int Height, const wchar_t *Title, bool
 	WindowClassHandle.hInstance = ApplicationInstance;
 	WindowClassHandle.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WindowClassHandle.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	WindowClassHandle.lpszClassName = L"WindowsOpenGL";
+	WindowClassHandle.lpszClassName = "WindowsOpenGL";
 
 	RegisterClassEx(&WindowClassHandle);
 
@@ -53,7 +53,7 @@ int Window::Create(const int Width, const int Height, const wchar_t *Title, bool
 
 		if (ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 		{
-			OutputDebugString(L"Can not create fullscreen window!");
+			OutputDebugString("Can not create fullscreen window!");
 			DebugBreak();
 
 			return ERROR_INVALID_FUNCTION;
@@ -63,7 +63,7 @@ int Window::Create(const int Width, const int Height, const wchar_t *Title, bool
 		windowStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	}
 
-	WindowHandle = CreateWindowEx(windowExtendedStyle, L"WindowsOpenGL", Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
+	WindowHandle = CreateWindowEx(windowExtendedStyle, "WindowsOpenGL", Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
 
 	ShowWindow(WindowHandle, ShowStyle);
 
@@ -76,6 +76,11 @@ int Window::Create(const int Width, const int Height, const wchar_t *Title, bool
 	{
 		while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
 		{
+			if (Message.message == WM_QUIT)
+			{
+				break;
+			}
+
 			TranslateMessage(&Message);
 			DispatchMessageA(&Message);
 		}
@@ -146,7 +151,10 @@ LRESULT CALLBACK Window::MessageLoopCallback(HWND WindowHandle, UINT Message, WP
 
 void Window::SetRenderer(Renderer::IWindowRenderer *NewRenderer)
 {
-	delete Renderer;
+	if(Renderer == nullptr)
+	{
+		delete Renderer;
+	}
 
 	Renderer = NewRenderer;
 }

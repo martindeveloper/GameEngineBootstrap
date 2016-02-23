@@ -16,7 +16,7 @@ namespace WindowBootstrap {
 
 		Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 		~Window();
-		int Create(const int Width, const int Height, wchar_t const *Title, bool isFullscreen);
+		int Create(const int Width, const int Height, LPCSTR Title, bool isFullscreen);
 		void SetRenderer(Renderer::IWindowRenderer *NewRenderer);
 		static LRESULT CALLBACK StaticMessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam);
 

@@ -26,7 +26,7 @@ D3D11Renderer::~D3D11Renderer()
 	DeviceContext->Release();
 }
 
-void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
+void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDescription;
 
@@ -43,7 +43,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 	swapChainDescription.OutputWindow = windowHandle;
 	swapChainDescription.SampleDesc.Count = 1; // multi-samples
 	swapChainDescription.Windowed = isWindowed;
-	swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH ;
+	swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	swapChainDescription.BufferDesc.Width = windowRectangle.right;
 	swapChainDescription.BufferDesc.Height = windowRectangle.bottom;
 
@@ -94,18 +94,18 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, bool isWindowed)
 	Device->CreateRasterizerState(&rasterizerDescription, &RasterizerState);
 }
 
-void D3D11Renderer::ClearWindow(double deltaTime)
+void D3D11Renderer::ClearWindow(const double deltaTime)
 {
 	const FLOAT color[4] = { sin(deltaTime) * 0.5f + 0.5f, cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
 	DeviceContext->ClearRenderTargetView(BackBuffer, color);
 }
 
-void D3D11Renderer::Update(double deltaTime)
+void D3D11Renderer::Update(const double deltaTime)
 {
 
 }
 
-void D3D11Renderer::Render(double deltaTime)
+void D3D11Renderer::Render(const double deltaTime)
 {
 	HRESULT result = S_OK;
 

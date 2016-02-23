@@ -11,7 +11,7 @@ struct WindowProperties
 	// Custom
 	unsigned __int32 Width;
 	unsigned __int32 Height;
-	const wchar_t* Title;
+	LPCSTR Title;
 	bool IsFullscreen;
 	Renderer::IWindowRenderer* Renderer;
 };
@@ -31,7 +31,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	windowProperties.Width = 1024;
 	windowProperties.Height = 768;
-	windowProperties.Title = L"OpenGL Window";
+	windowProperties.Title = "OpenGL Window";
 	windowProperties.IsFullscreen = false;
 	windowProperties.Renderer = new Renderer::D3D11Renderer();
 

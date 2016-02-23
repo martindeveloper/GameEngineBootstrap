@@ -11,10 +11,10 @@ namespace Renderer{
 	{
 	public:
 		OpenGLRenderer();
-		void BeforeStart(HDC WindowDeviceContext, bool isWindowed) override;
-		void ClearWindow(double deltaTime) override;
-		void Update(double deltaTime) override;
-		void Render(double deltaTime) override;
+		void BeforeStart(HDC WindowDeviceContext, const bool isWindowed) override;
+		void ClearWindow(const double deltaTime) override;
+		void Update(const double deltaTime) override;
+		void Render(const double deltaTime) override;
 		virtual ~OpenGLRenderer();
 
 	private:
