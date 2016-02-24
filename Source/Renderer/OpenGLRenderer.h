@@ -1,9 +1,9 @@
 #pragma once
-#include "Headers.h"
+#include "../Headers.h"
 
 // Libraries
 #pragma comment(lib, "glu32")
-#pragma comment(lib, "glew32")
+#pragma comment(lib, "../External/glew/lib/glew32")
 #pragma comment(lib, "opengl32")
 
 namespace Renderer{

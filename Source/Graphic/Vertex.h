@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ColorRGBA.h"
-#include "Vector3.h"
+#include "../Math/Vector3.h"
 
 #pragma pack(push, 1)
 namespace Graphic

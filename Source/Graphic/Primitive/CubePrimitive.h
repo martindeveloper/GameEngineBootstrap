@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vertex.h"
+#include "../Vertex.h"
 namespace Graphic
 {
 	namespace Primitive

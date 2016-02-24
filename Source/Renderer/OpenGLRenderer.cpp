@@ -107,7 +107,7 @@ void OpenGLRenderer::Render(const double deltaTime)
 
 	GLint attributeVertexPosition = glGetAttribLocation(ShaderProgramID, "vertexPosition");
 	GLint attributeVertexColor = glGetAttribLocation(ShaderProgramID, "vertexColor");
-
+	
 	const GLsizei stride = 7 * sizeof(GLfloat);
 
 	glVertexAttribPointer(attributeVertexPosition, 3, GL_FLOAT, GL_FALSE, stride, 0); // X, Y, Z
@@ -185,13 +185,17 @@ GLint OpenGLRenderer::CompileShader(const char* path, GLenum type)
 	// Check compilation
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compilationResult);
 	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &compilationLogLength);
-	std::vector<char> shaderErrorMessage(compilationLogLength);
-	glGetShaderInfoLog(shaderID, compilationLogLength, NULL, &shaderErrorMessage[0]);
 
-	// Output debug message
-	std::cout << "Shader #" << shaderID << " compilation result: " << &shaderErrorMessage[0] << std::endl;
-	OutputDebugStringA(&shaderErrorMessage[0]);
+	if (compilationResult != GL_TRUE)
+	{
+		std::vector<char> shaderErrorMessage(compilationLogLength);
+		glGetShaderInfoLog(shaderID, compilationLogLength, NULL, &shaderErrorMessage[0]);
 
+		// Output debug message
+		std::cout << "Shader #" << shaderID << " compilation result: " << &shaderErrorMessage[0] << std::endl;
+		OutputDebugStringA(&shaderErrorMessage[0]);
+	}
+	
 	return shaderID;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Matrix4x4.h"
+#include "../Math/Matrix4x4.h"
 
 #pragma pack(push, 1)
 namespace Graphic

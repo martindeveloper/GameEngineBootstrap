@@ -182,6 +182,3 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
-
-glew/
-*.vcxproj*

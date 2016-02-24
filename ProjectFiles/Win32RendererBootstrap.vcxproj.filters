@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{23caa30c-c718-450c-8719-3f128fec40b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\GLSL">
+      <UniqueIdentifier>{a137601a-a2bb-49ee-8417-40075ae30773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\HLSL">
+      <UniqueIdentifier>{79165066-6359-4e90-b3bb-b8e4f61b9495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphic">
+      <UniqueIdentifier>{2b39c391-ceea-4b44-b7a0-376346e43e5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer">
+      <UniqueIdentifier>{8adf3553-5811-455f-a2f2-ea4cf6e85dd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{40e50918-7342-4be2-8b7f-dc96692f1317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphic\Primitive">
+      <UniqueIdentifier>{84710a86-4a05-4a20-9f80-946a30859bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FileSystem">
+      <UniqueIdentifier>{146781a2-3456-44a7-a980-9be8d2827c89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer">
+      <UniqueIdentifier>{309e5510-0886-4475-b73f-3f02067c6870}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FileSystem">
+      <UniqueIdentifier>{9fcc5bca-0cbb-4fee-a9d0-1f02dfc720df}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\D3D11Renderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\OpenGLRenderer.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\filesystem\File.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\Headers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\graphic\ConstantBuffer.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\graphic\ColorRGBA.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\graphic\primitive\CubePrimitive.h">
+      <Filter>Header Files\Graphic\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\D3D11Renderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\filesystem\File.h">
+      <Filter>Header Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\IWindowRenderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\OpenGLRenderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\math\Matrix4x4.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\graphic\primitive\TrianglePrimitive.h">
+      <Filter>Header Files\Graphic\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\math\Vector3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\math\Vector4.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\graphic\Vertex.h">
+      <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\source\shaders\glsl\TriangleFragment.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\source\shaders\glsl\TriangleVertex.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\source\shaders\glsl\SolidColorFragment.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\source\shaders\glsl\RotationVertex.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\source\shaders\hlsl\RotationVertex.hlsl">
+      <Filter>Shaders\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\source\shaders\hlsl\SolidColorPixel.hlsl">
+      <Filter>Shaders\HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

@@ -19,7 +19,7 @@ struct WindowProperties
 // Prototypes
 int CreateWindowWithRenderer(WindowProperties properties, Renderer::IWindowRenderer* renderer);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
 	WindowProperties windowProperties;
 	ZeroMemory(&windowProperties, sizeof(windowProperties));
@@ -33,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	windowProperties.Height = 768;
 	windowProperties.Title = "OpenGL Window";
 	windowProperties.IsFullscreen = false;
-	windowProperties.Renderer = new Renderer::D3D11Renderer();
+	windowProperties.Renderer = new Renderer::OpenGLRenderer();
 
 	int result = CreateWindowWithRenderer(windowProperties, windowProperties.Renderer);
 
