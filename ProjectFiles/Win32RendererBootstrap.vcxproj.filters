@@ -60,6 +60,9 @@
     <ClCompile Include="..\source\filesystem\File.cpp">
       <Filter>Source Files\FileSystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\FileSystem\ImageBMP.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Headers.h">
@@ -103,6 +106,12 @@
     </ClInclude>
     <ClInclude Include="..\source\graphic\Vertex.h">
       <Filter>Header Files\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FileSystem\Image.h">
+      <Filter>Header Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\FileSystem\ImageBMP.h">
+      <Filter>Header Files\FileSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

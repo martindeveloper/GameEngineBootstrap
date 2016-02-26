@@ -18,6 +18,10 @@
 #include "../External/glm/glm.hpp"
 #include "../External/glm/gtx/transform.hpp"
 
+#include "FileSystem/File.h"
+#include "FileSystem/Image.h"
+#include "FileSystem/ImageBMP.h"
+
 #include "Graphic/ColorRGBA.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -29,8 +33,6 @@
 
 #include "Renderer/IWindowRenderer.h"
 #include "Window.h"
-
-#include "FileSystem/File.h"
 
 #include "../External/glew/inc/glew/glew.h"
 
