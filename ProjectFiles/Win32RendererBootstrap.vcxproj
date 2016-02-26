@@ -117,6 +117,9 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
       <Message>
       </Message>
     </PostBuildEvent>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\source\filesystem\File.cpp" />
@@ -144,8 +147,8 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
   <ItemGroup>
     <None Include="..\source\shaders\glsl\RotationVertex.glsl" />
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl" />
-    <None Include="..\source\shaders\glsl\TriangleFragment.glsl" />
-    <None Include="..\source\shaders\glsl\TriangleVertex.glsl" />
+    <None Include="..\source\shaders\glsl\SimpleFragment.glsl" />
+    <None Include="..\source\shaders\glsl\SimpleVertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\source\shaders\hlsl\RotationVertex.hlsl">

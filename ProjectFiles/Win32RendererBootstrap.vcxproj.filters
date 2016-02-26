@@ -106,16 +106,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\source\shaders\glsl\TriangleFragment.glsl">
-      <Filter>Shaders\GLSL</Filter>
-    </None>
-    <None Include="..\source\shaders\glsl\TriangleVertex.glsl">
-      <Filter>Shaders\GLSL</Filter>
-    </None>
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
     <None Include="..\source\shaders\glsl\RotationVertex.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\source\shaders\glsl\SimpleVertex.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\source\shaders\glsl\SimpleFragment.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
   </ItemGroup>

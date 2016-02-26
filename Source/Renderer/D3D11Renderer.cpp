@@ -48,9 +48,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	swapChainDescription.BufferDesc.Height = windowRectangle.bottom;
 
 	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-#if defined(DEBUG) || defined(_DEBUG)
 	flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif 
 
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -65,23 +63,24 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 		NULL,
 		&DeviceContext);
 
-	PrepareBuffers();
-
 	HRESULT result = S_OK;
 
-	// Triangle primitive
-	Graphic::Primitive::TrianglePrimitive triangle;
+	// Cube primitive
+	Cube = new Graphic::Primitive::CubePrimitive(Graphic::ColorRGBA::Red());
+
+	// Must be AFTER Cube is created, we need to have Cube ready to fill ByteWidth of Vertex Buffer
+	PrepareBuffers();
 
 	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 
 	result = DeviceContext->Map(VertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mappedSubResource);
-	memcpy(mappedSubResource.pData, &triangle, sizeof(triangle));
+	memcpy(mappedSubResource.pData, Cube->Verticies, sizeof(Cube->Verticies));
 	DeviceContext->Unmap(VertexBuffer, NULL);
 
 	assert(!(FAILED(result)));
 
 	// Create and set viewport
-	D3D11_VIEWPORT viewport = {0, 0, 1024, 768, 0.0f, 1.0f };
+	D3D11_VIEWPORT viewport = {0, 0, (float)Parameters.Width, (float)Parameters.Height, 0.0f, 1.0f };
 	DeviceContext->RSSetViewports(1, &viewport);
 
 	CreateShaders();
@@ -126,13 +125,13 @@ void D3D11Renderer::Render(const double deltaTime)
 		result = DeviceContext->Map(UniformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantBufferMappedResource);
 		Graphic::Buffer::ConstantBuffer* mappedConstantBuffer = (Graphic::Buffer::ConstantBuffer*)constantBufferMappedResource.pData;
 
-		Math::Matrix4x4 projectionMatrix(Math::Vector3<float>(.8f, .3f, 1.0f));
-		Math::Matrix4x4 viewMatrix;
-		Math::Matrix4x4 modelMatrix;
+		const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
+		const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		const glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-		const Math::Matrix4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+		const glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
-		mappedConstantBuffer->ModelViewProjectionMatrix = mvpMatrix;
+		mappedConstantBuffer->ModelViewProjectionMatrix = Math::Matrix4x4((const float*)&mvpMatrix);
 		mappedConstantBuffer->FrameNumber = frameCounter;
 
 		DeviceContext->Unmap(UniformBuffer, 0);
@@ -143,7 +142,7 @@ void D3D11Renderer::Render(const double deltaTime)
 	DeviceContext->RSSetState(RasterizerState);
 
 	// Draw
-	DeviceContext->Draw(3, 0);
+	DeviceContext->Draw(Cube->DrawCount, 0);
 
 	// Swap
 	result = SwapChain->Present(0, 0);
@@ -211,7 +210,7 @@ void D3D11Renderer::CreateVertexBuffer()
 	ZeroMemory(&bufferDescription, sizeof(bufferDescription));
 
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDescription.ByteWidth = sizeof(Graphic::Vertex) * 3;
+	bufferDescription.ByteWidth = sizeof(Graphic::Vertex) * Cube->DrawCount;
 	bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 

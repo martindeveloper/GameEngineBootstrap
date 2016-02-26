@@ -4,6 +4,7 @@
 #include <dxgi.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 // Libraries
 #pragma comment (lib, "d3d11.lib")
@@ -33,6 +34,9 @@ namespace Renderer{
 		ID3D11InputLayout* DefaultInputLayout;
 		ID3D11VertexShader* RotationVertexShader;
 		ID3D11PixelShader* SolidColorPixelShader;
+
+		// Primitives
+		Graphic::Primitive::CubePrimitive* Cube;
 
 	public:
 		D3D11Renderer();

@@ -7,7 +7,8 @@ namespace Graphic
 	{
 		class CubePrimitive
 		{
-		private:
+		public:
+			const unsigned __int16 DrawCount = 12 * 3;
 			Graphic::Vertex Verticies[36];
 
 		public:
@@ -61,7 +62,7 @@ namespace Graphic
 					1.0f, -1.0f, 1.0f
 				};
 
-				for (unsigned __int32 i = 0; i < 36; i++)
+				for (unsigned __int32 i = 0; i < DrawCount; i++)
 				{
 					Verticies[i].Position = (((Math::Vector3<float>*)rawCubeVerticies)[i]) * (float)0.5f;
 					Verticies[i].Color = color;

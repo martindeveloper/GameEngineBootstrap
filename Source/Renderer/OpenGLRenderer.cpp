@@ -55,21 +55,21 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS);
+	glDepthFunc(GL_NOTEQUAL);
 
 	// Enable blending
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create VAO and VBO
 	PrepareBuffers();
 
 	// Triangle VAO
-	Triangle = new Graphic::Primitive::TrianglePrimitive();
+	Cube = new Graphic::Primitive::CubePrimitive(Graphic::ColorRGBA::Red());
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(*Triangle), Triangle, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube->Verticies), Cube->Verticies, GL_STATIC_DRAW);
 
 	// Create shaders
 	CreateShaders();
@@ -83,7 +83,11 @@ void OpenGLRenderer::ClearWindow(const double deltaTime)
 {
 	const GLfloat color[] = { (float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
 
+	// Clear color buffer
 	glClearBufferfv(GL_COLOR, 0, color);
+
+	// Clear depth buffer
+	glClearDepth(0);
 
 	if (glGetError() != GL_NO_ERROR)
 	{
@@ -98,7 +102,7 @@ void OpenGLRenderer::Update(const double deltaTime)
 
 void OpenGLRenderer::Render(const double deltaTime)
 {
-	glViewport(0, 0, 1024, 768);
+	glViewport(0, 0, Parameters.Width, Parameters.Height);
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -108,6 +112,9 @@ void OpenGLRenderer::Render(const double deltaTime)
 	GLint attributeVertexPosition = glGetAttribLocation(ShaderProgramID, "vertexPosition");
 	GLint attributeVertexColor = glGetAttribLocation(ShaderProgramID, "vertexColor");
 	
+	assert(attributeVertexPosition >= 0);
+	assert(attributeVertexColor >= 0);
+
 	const GLsizei stride = 7 * sizeof(GLfloat);
 
 	glVertexAttribPointer(attributeVertexPosition, 3, GL_FLOAT, GL_FALSE, stride, 0); // X, Y, Z
@@ -123,10 +130,11 @@ void OpenGLRenderer::Render(const double deltaTime)
 
 		GLint frameCounterUniform = glGetUniformLocation(ShaderProgramID, "frameNumber");
 
-		assert(frameCounterUniform >= 0);
-
-		glUniform1f(frameCounterUniform, (float)frameCounter);
-
+		if (frameCounterUniform >= 0)
+		{
+			glUniform1f(frameCounterUniform, (float)frameCounter);
+		}
+		
 		frameCounter++;
 	}
 	// End of frame counter uniform
@@ -135,19 +143,22 @@ void OpenGLRenderer::Render(const double deltaTime)
 	{
 		GLint mvpUniform = glGetUniformLocation(ShaderProgramID, "ModelViewProjectionMatrix");
 
-		assert(mvpUniform >= 0);
+		if (mvpUniform >= 0)
+		{
+			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
+			const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			const glm::mat4 modelMatrix = glm::mat4(1.0f);
 
-		Math::Matrix4x4 projectionMatrix(Math::Vector3<float>(.8f, .3f, 1.0f));
-		Math::Matrix4x4 viewMatrix;
-		Math::Matrix4x4 modelMatrix;
+			const glm::mat4 glmMvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
 
-		const Math::Matrix4x4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+			const Math::Matrix4x4 mvpMatrix = Math::Matrix4x4(&glmMvpMatrix[0][0]);
 
-		glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&mvpMatrix);
+			glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&mvpMatrix);
+		}
 	}
 	// End of MVP block
 
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, Cube->DrawCount);
 
 	glDisableVertexAttribArray(attributeVertexPosition);
 	glDisableVertexAttribArray(attributeVertexColor);

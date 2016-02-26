@@ -67,6 +67,9 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 
 	ShowWindow(WindowHandle, ShowStyle);
 
+	Renderer->Parameters.Width = Width;
+	Renderer->Parameters.Height = Height;
+
 	Renderer->BeforeStart(WindowDeviceContext, !isFullscreen);
 
 	// Windows Message loop

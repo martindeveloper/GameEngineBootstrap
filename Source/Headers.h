@@ -15,6 +15,9 @@
 #include <fstream>
 #include <streambuf>
 
+#include "../External/glm/glm.hpp"
+#include "../External/glm/gtx/transform.hpp"
+
 #include "Graphic/ColorRGBA.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"

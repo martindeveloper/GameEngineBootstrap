@@ -18,6 +18,19 @@ namespace Math
 			Rows[3] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		};
 
+		Matrix4x4(const float* source) : Matrix4x4()
+		{
+			for (unsigned __int16 i = 0; i < 4; i++)
+			{
+				unsigned __int16 y = i * 4;
+
+				Rows[i].X = source[y];
+				Rows[i].Y = source[y + 1];
+				Rows[i].Z = source[y + 2];
+				Rows[i].W = source[y + 3];
+			}
+		};
+
 		Matrix4x4(float scale) : Matrix4x4()
 		{
 			for (unsigned __int16 i = 0; i < 3; i++)
