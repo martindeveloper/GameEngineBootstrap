@@ -5,20 +5,50 @@ using namespace FileSystem;
 File::File(const char* path)
 {
 	filePath = path;
+
+	DataStream = std::ifstream(filePath, std::ios::binary | std::ios::ate);
+};
+
+File::~File()
+{
+	Free();
+
+	DataStream.close();
+};
+
+void File::Free()
+{
+	Buffer.clear();
+};
+
+void File::Load()
+{
+	std::streamsize size = DataStream.tellg();
+	DataStream.seekg(0, std::ios::beg);
+
+	Buffer.resize(size);
+	DataStream.read(Buffer.data(), size);
 };
 
 std::string File::GetContent()
 {
-	std::ifstream fileStream(filePath);
-	std::string fileContent((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
+	std::string fileContent(Buffer.begin(), Buffer.end());
 
 	return fileContent;
 };
 
 std::vector<char> File::GetBinaryContent()
 {
-	std::ifstream fileStream(filePath, std::ios::in | std::ios::binary);
-	std::vector<char> fileContent((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
+	return Buffer;
+};
 
-	return fileContent;
+std::vector<char>* File::GetBinaryContentPointer()
+{
+	return &Buffer;
+};
+
+bool File::IsExists()
+{
+	bool isExists = DataStream.good();
+	return isExists;
 };

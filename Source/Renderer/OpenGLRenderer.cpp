@@ -8,6 +8,7 @@ OpenGLRenderer::OpenGLRenderer()
 
 OpenGLRenderer::~OpenGLRenderer()
 {
+	delete Cube;
 }
 
 void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
@@ -30,10 +31,10 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	SetPixelFormat(WindowDeviceContext, WindowPixelFormat, &OpenGLPixelFormatDescriptor);
 
 	// Create OpenGL context
-	HGLRC OpenGLRenderingContextHandle = wglCreateContext(WindowDeviceContext);
+	HGLRC FakeOpenGLRenderingContextHandle = wglCreateContext(WindowDeviceContext);
 
 	// Make OpenGL current
-	if (!wglMakeCurrent(WindowDeviceContext, OpenGLRenderingContextHandle))
+	if (!wglMakeCurrent(WindowDeviceContext, FakeOpenGLRenderingContextHandle))
 	{
 		DWORD error = GetLastError();
 		OutputDebugStringA("Can not make current OpenGL context");
@@ -53,19 +54,33 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 		exit(ERROR_INVALID_FUNCTION);
 	}
 
+	int attribs[] =
+	{
+		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+		WGL_CONTEXT_MINOR_VERSION_ARB, 3,
+		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+		0
+	};
+
+	HGLRC OpenGLRenderingContextHandle = wglCreateContextAttribsARB(WindowDeviceContext, 0, attribs);
+	wglMakeCurrent(NULL, NULL);
+	BOOL isTempContextDeleted = wglDeleteContext(FakeOpenGLRenderingContextHandle);
+	BOOL isContextActive = wglMakeCurrent(WindowDeviceContext, OpenGLRenderingContextHandle);
+
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_NOTEQUAL);
+	glDepthFunc(GL_LESS);
 
 	// Enable blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create VAO and VBO
 	PrepareBuffers();
 
 	// Triangle VAO
-	Cube = new Graphic::Primitive::CubePrimitive(Graphic::ColorRGBA::Red());
+	Cube = new Graphic::Primitive::CubePrimitive(Graphic::ColorRGBA(1.0f, 1.0f, 1.0f));
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -77,17 +92,38 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	glBindVertexArray(NULL);
+
+	// TODO(martin.pernica): Load texture. Move this into separate method call
+	FileSystem::File sourceFile("lenaColor512.bmp");
+	Image::ImageBMP sourceBitmap(&sourceFile);
+
+	TestTexture = UploadTexture((Image::Image*)&sourceBitmap);
+}
+
+GLuint OpenGLRenderer::UploadTexture(Image::Image* source)
+{
+	source->Load();
+
+	// Create one OpenGL texture
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, source->GetWidth(), source->GetHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, source->GetDataPointer());
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	source->Free();
+
+	return textureID;
 }
 
 void OpenGLRenderer::ClearWindow(const double deltaTime)
 {
-	const GLfloat color[] = { (float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
+	glClearColor((float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f);
 
-	// Clear color buffer
-	glClearBufferfv(GL_COLOR, 0, color);
-
-	// Clear depth buffer
-	glClearDepth(0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (glGetError() != GL_NO_ERROR)
 	{
@@ -111,17 +147,28 @@ void OpenGLRenderer::Render(const double deltaTime)
 
 	GLint attributeVertexPosition = glGetAttribLocation(ShaderProgramID, "vertexPosition");
 	GLint attributeVertexColor = glGetAttribLocation(ShaderProgramID, "vertexColor");
+	GLint attributeVertexUV = glGetAttribLocation(ShaderProgramID, "vertexUV");
+	GLint uniformTextureSampler = glGetUniformLocation(ShaderProgramID, "mainTextureSampler");
 	
 	assert(attributeVertexPosition >= 0);
 	assert(attributeVertexColor >= 0);
+	assert(attributeVertexUV >= 0);
+	assert(uniformTextureSampler >= 0);
 
-	const GLsizei stride = 7 * sizeof(GLfloat);
-
+	const GLsizei stride = sizeof(Graphic::Vertex);
+	
 	glVertexAttribPointer(attributeVertexPosition, 3, GL_FLOAT, GL_FALSE, stride, 0); // X, Y, Z
 	glVertexAttribPointer(attributeVertexColor, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(3 * sizeof(GLfloat))); // R, G, B, A
+	glVertexAttribPointer(attributeVertexUV, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(7 * sizeof(GLfloat))); // U, V
 
 	glEnableVertexAttribArray(attributeVertexPosition);
 	glEnableVertexAttribArray(attributeVertexColor);
+	glEnableVertexAttribArray(attributeVertexUV);
+
+	// Texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TestTexture);
+	glUniform1i(uniformTextureSampler, 0);
 
 	// TODO: Remove this code below. Only for rotation testing
 	// Frame counter uniform block
@@ -146,7 +193,7 @@ void OpenGLRenderer::Render(const double deltaTime)
 		if (mvpUniform >= 0)
 		{
 			const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
-			const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, -3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 			const glm::mat4 modelMatrix = glm::mat4(1.0f);
 
 			const glm::mat4 glmMvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
@@ -162,6 +209,7 @@ void OpenGLRenderer::Render(const double deltaTime)
 
 	glDisableVertexAttribArray(attributeVertexPosition);
 	glDisableVertexAttribArray(attributeVertexColor);
+	glDisableVertexAttribArray(attributeVertexUV);
 
 	GLenum err = glGetError();
 
@@ -175,15 +223,26 @@ void OpenGLRenderer::Render(const double deltaTime)
 
 GLint OpenGLRenderer::CompileShader(const char* path, GLenum type)
 {
-	// Create files helper class to read file
-	FileSystem::File file(path);
-
 	// Variables to debug of shader compilation
 	GLint compilationResult = GL_FALSE;
 	int compilationLogLength;
 
 	// Create shader
 	GLuint shaderID = glCreateShader(type);
+
+	// Create files helper class to read file
+	FileSystem::File file(path);
+
+	if (!file.IsExists())
+	{
+		const char* error = "Can not load shader file";
+		std::cout << error << std::endl;
+		OutputDebugStringA(error);
+
+		return shaderID;
+	}
+
+	file.Load();
 
 	// Read file
 	std::string shaderString = file.GetContent();

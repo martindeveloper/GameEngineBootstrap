@@ -43,6 +43,15 @@
     <Filter Include="Source Files\FileSystem">
       <UniqueIdentifier>{9fcc5bca-0cbb-4fee-a9d0-1f02dfc720df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphic\Buffer">
+      <UniqueIdentifier>{8f5d51b7-9075-4899-9d97-cf085af932a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Image">
+      <UniqueIdentifier>{411072a7-4ed2-4ff0-ae2c-9ea8ba2bdc91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image">
+      <UniqueIdentifier>{54378531-4bfa-4070-bd55-6fa34d45eaa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\main.cpp">
@@ -60,19 +69,13 @@
     <ClCompile Include="..\source\filesystem\File.cpp">
       <Filter>Source Files\FileSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\FileSystem\ImageBMP.cpp">
-      <Filter>Source Files\FileSystem</Filter>
+    <ClCompile Include="..\Source\Image\ImageBMP.cpp">
+      <Filter>Source Files\Image</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\Headers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\Window.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\graphic\ConstantBuffer.h">
-      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="..\source\graphic\ColorRGBA.h">
       <Filter>Header Files\Graphic</Filter>
@@ -107,11 +110,35 @@
     <ClInclude Include="..\source\graphic\Vertex.h">
       <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FileSystem\Image.h">
-      <Filter>Header Files\FileSystem</Filter>
+    <ClInclude Include="..\Source\Graphic\UVCoordinates.h">
+      <Filter>Header Files\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\FileSystem\ImageBMP.h">
-      <Filter>Header Files\FileSystem</Filter>
+    <ClInclude Include="..\Source\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Math\Math.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Graphic\Primitive\Primitive.h">
+      <Filter>Header Files\Graphic\Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h">
+      <Filter>Header Files\Graphic\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Image\ImageBMP.h">
+      <Filter>Header Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Image\ImageHeaderBMP.h">
+      <Filter>Header Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Image\ImagePixel.h">
+      <Filter>Header Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Image\Image.h">
+      <Filter>Header Files\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

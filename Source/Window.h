@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Headers.h"
+#include "Common.h"
 
 namespace WindowBootstrap {
 	struct WindowParameters
@@ -21,7 +21,7 @@ namespace WindowBootstrap {
 		static LRESULT CALLBACK StaticMessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam);
 
 	private:
-		Renderer::IWindowRenderer *Renderer;
+		Renderer::IWindowRenderer* Renderer = nullptr;
 
 		HDC WindowDeviceContext;
 		HWND WindowHandle;

@@ -8,12 +8,14 @@ struct VS_INPUT
 {
 	float3 Position : VERTEX_POSITION0;
 	float4 Diffuse : VERTEX_COLOR0;
+	float2 UV : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
 	float4 Position : SV_POSITION0;
 	float4 Diffuse : COLOR0;
+	float2 UV : TEXCOORD0;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -27,6 +29,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 	vertexStageOutput.Position = mul(ModelViewProjectionMatrix, float4(x, y, input.Position.z, 1.0f));
 	vertexStageOutput.Diffuse = input.Diffuse;
+	vertexStageOutput.UV = input.UV;
 
 	return vertexStageOutput;
 }

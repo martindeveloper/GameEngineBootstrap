@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Headers.h"
+#include "../Common.h"
 
 namespace Renderer {
 	struct RendererParameters
@@ -12,6 +12,8 @@ namespace Renderer {
 	class IWindowRenderer
 	{
 	public:
+		virtual ~IWindowRenderer() {};
+
 		RendererParameters Parameters;
 
 		virtual void BeforeStart(HDC WindowDeviceContext, const bool isWindowed) = 0;

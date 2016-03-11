@@ -1,4 +1,7 @@
-#include "Headers.h"
+#include "Common.h"
+
+#include "Renderer/OpenGLRenderer.h"
+#include "Renderer/D3D11Renderer.h"
 
 struct WindowProperties
 {

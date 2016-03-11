@@ -2,6 +2,7 @@
 
 #include "ColorRGBA.h"
 #include "../Math/Vector3.h"
+#include "UVCoordinates.h"
 
 #pragma pack(push, 1)
 namespace Graphic
@@ -10,6 +11,9 @@ namespace Graphic
 	{
 		Math::Vector3<float> Position;
 		Graphic::ColorRGBA Color;
+#ifdef VERTEX_HAVE_UV
+		UVCoordinates UV;
+#endif
 	};
 };
 #pragma pack(pop)
