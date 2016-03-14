@@ -102,6 +102,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 void D3D11Renderer::CreateDepthBuffer()
 {
+	/*
 	D3D11_TEXTURE2D_DESC depthStencil_DESCRIPTOR;
 	ZeroMemory(&depthStencil_DESCRIPTOR, sizeof(D3D11_TEXTURE2D_DESC));
 	depthStencil_DESCRIPTOR.Width = Parameters.Width;
@@ -147,6 +148,7 @@ void D3D11Renderer::CreateDepthBuffer()
 	result = m_Device->CreateDepthStencilView(depthStencilBuffer, &DepthStencilView_DESCRIPTOR, &m_DepthStencilView); 
 
 	if (FAILED(result)) return false;
+	*/
 }
 
 void D3D11Renderer::ClearWindow(const double deltaTime)

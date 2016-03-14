@@ -47,6 +47,12 @@ std::vector<char>* File::GetBinaryContentPointer()
 	return &Buffer;
 };
 
+bool File::IsLoaded()
+{
+	bool isLoaded = Buffer.size() != 0;
+	return isLoaded;
+};
+
 bool File::IsExists()
 {
 	bool isExists = DataStream.good();

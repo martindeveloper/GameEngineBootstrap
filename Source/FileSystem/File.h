@@ -13,6 +13,7 @@ namespace FileSystem
 		std::vector<char> GetBinaryContent();
 		std::vector<char>* GetBinaryContentPointer();
 		bool IsExists();
+		bool IsLoaded();
 		void Load();
 		void Free();
 

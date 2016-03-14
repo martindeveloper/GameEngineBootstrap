@@ -30,6 +30,11 @@ namespace Graphic
 		{
 			return{ 0.0f, 0.0f, 1.0f, alpha };
 		};
+
+		static ColorRGBA White(float alpha = 1.0f)
+		{
+			return{ 1.0f, 1.0f, 1.0f, alpha };
+		};
 	};
 };
 #pragma pack(pop)

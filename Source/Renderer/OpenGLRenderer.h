@@ -10,6 +10,7 @@
 #include "../Image/ImageBMP.h"
 #include "../Math/Math.h"
 #include "../Graphic/Primitive/Primitive.h"
+#include "../Graphic/Model/ObjModel.h"
 
 // Libraries
 #pragma comment(lib, "glu32")
@@ -46,8 +47,8 @@ namespace Renderer{
 		void CreateShaders();
 
 		// TODO: Delete this temp stuff
-		Graphic::Primitive::TrianglePrimitive* Triangle;
-		Graphic::Primitive::CubePrimitive* Cube;
+		Graphic::Model::ObjModel* CubeModel;
+
 		GLuint TestTexture;
 	};
 }

@@ -125,6 +125,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Graphic\Model\ObjModel.cpp" />
     <ClCompile Include="..\Source\Image\ImageBMP.cpp" />
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\filesystem\File.cpp" />
@@ -136,6 +137,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\source\filesystem\File.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h" />
     <ClInclude Include="..\source\graphic\ColorRGBA.h" />
+    <ClInclude Include="..\Source\Graphic\Model\ObjModel.h" />
     <ClInclude Include="..\source\graphic\primitive\CubePrimitive.h" />
     <ClInclude Include="..\Source\Graphic\Primitive\Primitive.h" />
     <ClInclude Include="..\source\graphic\primitive\TrianglePrimitive.h" />
@@ -148,6 +150,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Image\ImagePixel.h" />
     <ClInclude Include="..\Source\Math\Math.h" />
     <ClInclude Include="..\source\math\Matrix4x4.h" />
+    <ClInclude Include="..\Source\Math\Vector2.h" />
     <ClInclude Include="..\source\math\Vector3.h" />
     <ClInclude Include="..\source\math\Vector4.h" />
     <ClInclude Include="..\source\renderer\D3D11Renderer.h" />

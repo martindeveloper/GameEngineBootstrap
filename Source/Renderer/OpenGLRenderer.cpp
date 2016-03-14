@@ -8,7 +8,7 @@ OpenGLRenderer::OpenGLRenderer()
 
 OpenGLRenderer::~OpenGLRenderer()
 {
-	delete Cube;
+	delete CubeModel;
 }
 
 void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
@@ -79,12 +79,14 @@ void OpenGLRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	// Create VAO and VBO
 	PrepareBuffers();
 
-	// Triangle VAO
-	Cube = new Graphic::Primitive::CubePrimitive(Graphic::ColorRGBA(1.0f, 1.0f, 1.0f));
+	// Load cube from OBJ
+	FileSystem::File cubeObjSource("CubeModel.obj");
+	CubeModel = new Graphic::Model::ObjModel(&cubeObjSource);
+	CubeModel->Load();
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Cube->Verticies), Cube->Verticies, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, CubeModel->Vertices.size() * sizeof(Graphic::Vertex), &CubeModel->Vertices[0], GL_STATIC_DRAW);
 
 	// Create shaders
 	CreateShaders();
@@ -205,7 +207,7 @@ void OpenGLRenderer::Render(const double deltaTime)
 	}
 	// End of MVP block
 
-	glDrawArrays(GL_TRIANGLES, 0, Cube->DrawCount);
+	glDrawArrays(GL_TRIANGLES, 0, CubeModel->Vertices.size());
 
 	glDisableVertexAttribArray(attributeVertexPosition);
 	glDisableVertexAttribArray(attributeVertexColor);

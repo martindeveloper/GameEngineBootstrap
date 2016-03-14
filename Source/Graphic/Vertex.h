@@ -14,6 +14,9 @@ namespace Graphic
 #ifdef VERTEX_HAVE_UV
 		UVCoordinates UV;
 #endif
+#ifdef VERTEX_HAVE_NORMAL
+		Math::Vector3<float> Normal;
+#endif
 	};
 };
 #pragma pack(pop)

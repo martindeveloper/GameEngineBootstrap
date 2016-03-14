@@ -4,6 +4,7 @@
 #define __GlobalHeaders
 
 #define VERTEX_HAVE_UV 1
+#undef VERTEX_HAVE_NORMAL
 
 #if 0
 #define VLD_FORCE_ENABLE 1
