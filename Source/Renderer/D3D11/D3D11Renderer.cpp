@@ -347,7 +347,7 @@ void D3D11Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
 {
 	HRESULT result = S_OK;
 
-	D3D11Material* material = static_cast<D3D11Material*>(entity->GetMaterial());
+	Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(entity->GetMaterial());
 
 	D3D11_BUFFER_DESC bufferDescription;
 	ZeroMemory(&bufferDescription, sizeof(bufferDescription));

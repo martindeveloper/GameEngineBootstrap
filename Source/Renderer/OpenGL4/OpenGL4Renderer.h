@@ -10,6 +10,11 @@
 #include "../../Image/ImageBMP.h"
 #include "../../Math/Math.h"
 
+// Custom types
+typedef uint32 OpenGL4Buffer;
+typedef uint32 OpenGL4ShaderProgram;
+typedef uint32 OpenGL4Texture;
+
 #include "OpenGL4Material.h"
 
 #include "../../Graphic/Vertex.h"
@@ -40,7 +45,6 @@ namespace Renderer{
 		void UploadTexture(Core::GameEntity* entity, Image::Image* image) override;
 
 	private:
-		GLuint VBO;
 		GLuint VAO;
 
 		// Materials
@@ -50,6 +54,7 @@ namespace Renderer{
 		GLint CreateShaderProgram(GLint vertexShader, GLint fragmentShader);
 
 		void PrepareBuffers() override;
+		void CreateVertexBufferForEntity(Core::GameEntity* entity);
 		void CreateShaderForEntity(Core::GameEntity* entity) override;
 	};
 }

@@ -24,7 +24,6 @@ OpenGL4Renderer::~OpenGL4Renderer()
 
 	GameEntitites.clear();
 
-	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &VAO);
 }
 
@@ -93,7 +92,7 @@ void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// Create VAO and VBO
+	// Create VAO
 	PrepareBuffers();
 
 	// Bind VAO
@@ -113,7 +112,11 @@ void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed
 
 			std::vector<Graphic::Vertex>* verticies = entity->GetVerticies();
 
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			CreateVertexBufferForEntity(entity);
+
+			Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
+
+			glBindBuffer(GL_ARRAY_BUFFER, material->VertexBuffer);
 			glBufferData(GL_ARRAY_BUFFER, entity->GetVertexBufferWidth(), &verticies->at(0), GL_STATIC_DRAW);
 
 			CreateShaderForEntity(entity);
@@ -174,11 +177,11 @@ void OpenGL4Renderer::Render(const double deltaTime)
 
 	for (auto entity : GameEntitites)
 	{
+		Renderer::OpenGL4Material* entityMaterial = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
+
 		glBindVertexArray(VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-		Renderer::OpenGL4Material* entityMaterial = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
+		glBindBuffer(GL_ARRAY_BUFFER, entityMaterial->VertexBuffer);
 
 		const uint32 shaderProgram = entityMaterial->ShaderProgramId;
 
@@ -355,12 +358,16 @@ void OpenGL4Renderer::PrepareBuffers()
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	glBindVertexArray(NULL);
+}
+
+void OpenGL4Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
+{
+	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
+
+	glGenBuffers(1, &material->VertexBuffer);
 }
 
 void OpenGL4Renderer::CreateShaderForEntity(Core::GameEntity* entity)

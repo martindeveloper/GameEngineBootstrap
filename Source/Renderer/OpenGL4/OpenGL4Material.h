@@ -10,11 +10,13 @@ namespace Renderer
 	public:
 		virtual ~OpenGL4Material()
 		{
+			glDeleteBuffers(1, &VertexBuffer);
 			glDeleteProgram(ShaderProgramId);
 			glDeleteTextures(1, &DiffuseTextureId);
 		}
-
-		uint32 DiffuseTextureId = 0;
-		uint32 ShaderProgramId = 0;
+		
+		OpenGL4Buffer VertexBuffer;
+		OpenGL4Texture DiffuseTextureId = 0;
+		OpenGL4ShaderProgram ShaderProgramId = 0;
 	};
 }
