@@ -8,6 +8,7 @@
 
 #include "../../Image/Image.h"
 #include "../../Image/ImageBMP.h"
+#include "../../Graphic/Buffer/ConstantBuffer.h"
 #include "../../Math/Math.h"
 
 // Custom types
@@ -45,16 +46,19 @@ namespace Renderer{
 		void UploadTexture(Core::GameEntity* entity, Image::Image* image) override;
 
 	private:
+		// Global buffers
+		Graphic::Buffer::ConstantBuffer UniformBuffer;
 		GLuint VAO;
 
 		// Materials
 		std::vector<Renderer::OpenGL4Material*> Materials;
 
+		void PrepareBuffers() override;
+		void CreateConstantBuffer() override;
+		void CreateShaderForEntity(Core::GameEntity* entity) override;
+
 		GLint CompileShader(const char* path, GLenum type);
 		GLint CreateShaderProgram(GLint vertexShader, GLint fragmentShader);
-
-		void PrepareBuffers() override;
 		void CreateVertexBufferForEntity(Core::GameEntity* entity);
-		void CreateShaderForEntity(Core::GameEntity* entity) override;
 	};
 }

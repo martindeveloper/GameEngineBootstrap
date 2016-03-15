@@ -23,7 +23,7 @@ void CubeEntity::OnLoad()
 	CurrentMaterial->PixelShader = "SolidColorFragment";
 
 	// Texture
-	FileSystem::File sourceFile("lenaColor512.bmp");
+	FileSystem::File sourceFile("lenaColor512A.bmp");
 	Image::ImageBMP sourceBitmap(&sourceFile);
 
 	Renderer->UploadTexture(this, (Image::Image*)&sourceBitmap);

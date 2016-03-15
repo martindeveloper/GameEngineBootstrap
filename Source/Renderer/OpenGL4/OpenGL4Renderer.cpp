@@ -139,7 +139,7 @@ void OpenGL4Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* imag
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->GetWidth(), image->GetHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, image->GetDataPointer());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->GetWidth(), image->GetHeight(), 0, GL_BGRA, GL_UNSIGNED_BYTE, image->GetDataPointer());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -163,6 +163,22 @@ void OpenGL4Renderer::ClearWindow(const double deltaTime)
 
 void OpenGL4Renderer::Update(const double deltaTime)
 {
+	// Modify constant values
+	{
+		static unsigned __int32 frameCounter = 0;
+
+		const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
+		const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, -3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		const glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+		const glm::mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
+
+		UniformBuffer.ModelViewProjectionMatrix = Math::Matrix4x4((const float*)&mvpMatrix);
+		UniformBuffer.FrameNumber = frameCounter;
+
+		frameCounter++;
+	}
+
 	for (auto entity : GameEntitites)
 	{
 		entity->OnUpdate(deltaTime);
@@ -212,39 +228,12 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		glBindTexture(GL_TEXTURE_2D, entityMaterial->DiffuseTextureId);
 		glUniform1i(uniformTextureSampler, 0);
 
-		// Frame counter uniform block
-		{
-			static unsigned __int32 frameCounter = 0;
+		// Constant buffer
+		GLint mvpUniform = glGetUniformLocation(shaderProgram, "UniformBuffer.ModelViewProjectionMatrix");
+		GLint frameCounterUniform = glGetUniformLocation(shaderProgram, "UniformBuffer.FrameNumber");
 
-			GLint frameCounterUniform = glGetUniformLocation(shaderProgram, "frameNumber");
-
-			if (frameCounterUniform >= 0)
-			{
-				glUniform1f(frameCounterUniform, (float)frameCounter);
-			}
-
-			frameCounter++;
-		}
-		// End of frame counter uniform
-
-		// MVP block
-		{
-			GLint mvpUniform = glGetUniformLocation(shaderProgram, "ModelViewProjectionMatrix");
-
-			if (mvpUniform >= 0)
-			{
-				const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
-				const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, -3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-				const glm::mat4 modelMatrix = glm::mat4(1.0f);
-
-				const glm::mat4 glmMvpMatrix = projectionMatrix * viewMatrix * modelMatrix;
-
-				const Math::Matrix4x4 mvpMatrix = Math::Matrix4x4(&glmMvpMatrix[0][0]);
-
-				glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&mvpMatrix);
-			}
-		}
-		// End of MVP block
+		glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&UniformBuffer.ModelViewProjectionMatrix);
+		glUniform1ui(frameCounterUniform, UniformBuffer.FrameNumber);
 
 		glDrawArrays(GL_TRIANGLES, 0, entity->GetVerticies()->size());
 
@@ -358,9 +347,16 @@ void OpenGL4Renderer::PrepareBuffers()
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
+	CreateConstantBuffer();
+
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	glBindVertexArray(NULL);
+}
+
+void OpenGL4Renderer::CreateConstantBuffer()
+{
+	SecureZeroMemory(&UniformBuffer, sizeof(Graphic::Buffer::ConstantBuffer));
 }
 
 void OpenGL4Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
