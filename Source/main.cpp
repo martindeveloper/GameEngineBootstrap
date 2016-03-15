@@ -36,7 +36,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	windowProperties.Height = 768;
 	windowProperties.Title = "OpenGL Window";
 	windowProperties.IsFullscreen = false;
-	windowProperties.Renderer = new Renderer::OpenGL4Renderer();
+	windowProperties.Renderer = new Renderer::D3D11Renderer();
 
 	int result = CreateWindowWithRenderer(windowProperties, windowProperties.Renderer);
 

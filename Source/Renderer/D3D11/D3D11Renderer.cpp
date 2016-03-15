@@ -51,13 +51,17 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	swapChainDescription.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDescription.OutputWindow = windowHandle;
 	swapChainDescription.SampleDesc.Count = 1; // multi-samples
+	swapChainDescription.SampleDesc.Quality = 0;
 	swapChainDescription.Windowed = isWindowed;
 	swapChainDescription.Flags = DXGI_SWAP_CHAIN_FLAG::DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 	swapChainDescription.BufferDesc.Width = windowRectangle.right;
 	swapChainDescription.BufferDesc.Height = windowRectangle.bottom;
 
+	Parameters = { windowRectangle.right, windowRectangle.bottom };
+
 	UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-	flags |= D3D11_CREATE_DEVICE_DEBUG;
+	flags |= D3D11_CREATE_DEVICE_DEBUG; 
+	flags |= D3D11_RLDO_DETAIL;
 
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -112,21 +116,106 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 	D3D11_RASTERIZER_DESC rasterizerDescription;
 	ZeroMemory(&rasterizerDescription, sizeof(D3D11_RASTERIZER_DESC));
+	rasterizerDescription.AntialiasedLineEnable = false;
+	rasterizerDescription.CullMode = D3D11_CULL_BACK;
+	rasterizerDescription.DepthBias = 0;
+	rasterizerDescription.DepthBiasClamp = 0.0f;
+	rasterizerDescription.DepthClipEnable = true;
 	rasterizerDescription.FillMode = D3D11_FILL_SOLID;
-	rasterizerDescription.CullMode = D3D11_CULL_NONE;
+	rasterizerDescription.FrontCounterClockwise = false;
+	rasterizerDescription.MultisampleEnable = false;
+	rasterizerDescription.ScissorEnable = false;
+	rasterizerDescription.SlopeScaledDepthBias = 0.0f;
 
 	Device->CreateRasterizerState(&rasterizerDescription, &RasterizerState);
+
+	CreateDepthBuffer();
 }
 
 void D3D11Renderer::CreateDepthBuffer()
 {
+	HRESULT result = S_OK;
 
+	ID3D11Texture2D* depthStencilBuffer = NULL;
+	D3D11_TEXTURE2D_DESC depthStencilDescription;
+	ZeroMemory(&depthStencilDescription, sizeof(D3D11_TEXTURE2D_DESC));
+
+	D3D11_RENDER_TARGET_VIEW_DESC backBufferDescription;
+	ZeroMemory(&backBufferDescription, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
+
+	BackBuffer->GetDesc(&backBufferDescription);
+
+	depthStencilDescription.Width = Parameters.Width;
+	depthStencilDescription.Height = Parameters.Height;
+	depthStencilDescription.MipLevels = 1;
+	depthStencilDescription.ArraySize = 1;
+	depthStencilDescription.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDescription.SampleDesc.Count = 1;
+	depthStencilDescription.SampleDesc.Quality = 0;
+	depthStencilDescription.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	depthStencilDescription.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDescription.CPUAccessFlags = 0;
+	depthStencilDescription.MiscFlags = 0;
+
+	result = Device->CreateTexture2D(&depthStencilDescription, NULL, &depthStencilBuffer);
+
+	assert(!(FAILED(result)));
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc;
+	ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	// Depth test parameters
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	// Stencil test parameters
+	dsDesc.StencilEnable = true;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create depth stencil state
+	ID3D11DepthStencilState* pDSState;
+	result = Device->CreateDepthStencilState(&dsDesc, &pDSState);
+
+	assert(!(FAILED(result)));
+
+	// Bind depth stencil state
+	DeviceContext->OMSetDepthStencilState(pDSState, 1);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+
+	descDSV.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION::D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+
+	// Create the depth stencil view
+	result = Device->CreateDepthStencilView(depthStencilBuffer, &descDSV, &DepthStencilView);
+
+	assert(!(FAILED(result)));
+
+	DeviceContext->OMSetRenderTargets(1, &BackBuffer, DepthStencilView);
 }
 
 void D3D11Renderer::ClearWindow(const double deltaTime)
 {
 	const FLOAT color[4] = { sin((FLOAT)deltaTime) * 0.5f + 0.5f, cos((FLOAT)deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
 	DeviceContext->ClearRenderTargetView(BackBuffer, color);
+
+	DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void D3D11Renderer::Update(const double deltaTime)
@@ -205,12 +294,16 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 
 	image->Load();
 
+	DXGI_FORMAT format = DXGI_FORMAT::DXGI_FORMAT_B8G8R8A8_UNORM;
+
 	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
 	textureDesc.Width = image->GetWidth();
 	textureDesc.Height = image->GetHeight();
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	textureDesc.Format = format;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -218,12 +311,14 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	unsigned int bytesPerPixel = 24 / 8;
+	constexpr uint32 bytesPerPixel = 32 / 8; // NOTE(martin.pernica): 24 is hardcoded value from BMP header. 
+	const uint32 pitch = bytesPerPixel * image->GetWidth();
 
 	D3D11_SUBRESOURCE_DATA textureSubResource;
+	ZeroMemory(&textureSubResource, sizeof(D3D11_SUBRESOURCE_DATA));
+
 	textureSubResource.pSysMem = image->GetDataPointer();
-	textureSubResource.SysMemPitch = static_cast<UINT>(bytesPerPixel * image->GetWidth());
-	textureSubResource.SysMemSlicePitch = static_cast<UINT>(bytesPerPixel * image->GetHeight() * image->GetWidth());
+	textureSubResource.SysMemPitch = pitch;
 
 	ID3D11Texture2D* tex;
 	result = Device->CreateTexture2D(&textureDesc, &textureSubResource, &tex);
@@ -234,7 +329,7 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-	srvDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	srvDesc.Format = format;
 
 	result = Device->CreateShaderResourceView(tex, &srvDesc, &material->DiffuseTexture);
 
@@ -248,7 +343,7 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.MipLODBias = 0.0f;
 	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.BorderColor[0] = 0;
 	samplerDesc.BorderColor[1] = 0;
 	samplerDesc.BorderColor[2] = 0;
@@ -316,8 +411,8 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 	const D3D11_INPUT_ELEMENT_DESC inputElementDescription[] =
 	{
 		{ "VERTEX_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 3 * 4
-		{ "VERTEX_COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 4 * 4
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 2 * 4
+		{ "VERTEX_COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 4 * 4
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 2 * 4
 	};
 
 	result = Device->CreateInputLayout(inputElementDescription, ARRAYSIZE(inputElementDescription), vertexShaderBytesPointer, vertexShaderBytesSize, &d3d11Material->InputLayout);

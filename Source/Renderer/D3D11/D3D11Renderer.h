@@ -44,6 +44,7 @@ namespace Renderer{
 		ID3D11DeviceContext* DeviceContext;
 		ID3D11RenderTargetView* BackBuffer;
 		ID3D11RasterizerState* RasterizerState;
+		ID3D11DepthStencilView* DepthStencilView;
 
 		// Global buffers
 		ID3D11Buffer* UniformBuffer;
@@ -52,11 +53,11 @@ namespace Renderer{
 		std::vector<Renderer::D3D11Material*> Materials;
 
 		void PrepareBuffers() override;
+		void CreateConstantBuffer() override;
 		void CreateShaderForEntity(Core::GameEntity* entity) override;
 
 		void CreateBackBuffer();
 		void CreateVertexBufferForEntity(Core::GameEntity* entity);
-		void CreateConstantBuffer();
 		void CreateDepthBuffer();
 	};
 }
