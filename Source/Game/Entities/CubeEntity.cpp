@@ -1,0 +1,59 @@
+#include "CubeEntity.h"
+
+using namespace Game::Entities;
+
+CubeEntity::~CubeEntity()
+{
+	delete CubeModel;
+}
+
+void CubeEntity::OnLoad()
+{
+	// Model
+	FileSystem::File cubeObjSource("CubeModel.obj");
+	CubeModel = new Graphic::Model::ObjModel(&cubeObjSource);
+	CubeModel->Load();
+
+	// Material
+
+	// NOTE(martin.pernica): Currently every material is deleted by renderer.
+	//                       Maybe it would be better delete it in entity itself
+	CurrentMaterial = Renderer->CreateMaterial();
+	CurrentMaterial->VertexShader = "RotationVertex";
+	CurrentMaterial->PixelShader = "SolidColorFragment";
+
+	// Texture
+	FileSystem::File sourceFile("lenaColor512.bmp");
+	Image::ImageBMP sourceBitmap(&sourceFile);
+
+	Renderer->UploadTexture(this, (Image::Image*)&sourceBitmap);
+}
+
+void CubeEntity::OnUpdate(double deltaTime)
+{
+
+}
+
+std::vector<Graphic::Vertex>* CubeEntity::GetVerticies() const
+{
+	return &CubeModel->Vertices;
+}
+
+Renderer::Material* CubeEntity::GetMaterial() const
+{
+	return CurrentMaterial;
+}
+
+uint32 CubeEntity::GetVertexBufferWidth() const
+{
+	static const uint32 vertexBufferWidth = sizeof(Graphic::Vertex) * CubeModel->Vertices.size();
+
+	return vertexBufferWidth;
+}
+
+uint32 CubeEntity::GetVertexBufferStride() const
+{
+	static const uint32 strideSize = sizeof(Graphic::Vertex);
+
+	return strideSize;
+}

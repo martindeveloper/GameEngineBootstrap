@@ -11,12 +11,16 @@
 #include <vld.h>
 #endif
 
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
 #include <windows.h>
 
 #include <exception>
 #include <cmath>
 #include <iostream>
+#include <map>
 #include <vector>
+#include <unordered_map>
 #include <assert.h>
 
 #include <string>
@@ -27,7 +31,9 @@
 #include "../External/glm/gtx/transform.hpp"
 
 #include "Types.h"
+#include "Core/IResource.h"
 
+#include "Renderer/Material.h"
 #include "Renderer/IWindowRenderer.h"
 #include "Window.h"
 

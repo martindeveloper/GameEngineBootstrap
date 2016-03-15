@@ -26,7 +26,7 @@ void File::Load()
 	std::streamsize size = DataStream.tellg();
 	DataStream.seekg(0, std::ios::beg);
 
-	Buffer.resize(size);
+	Buffer.resize((size_t)size);
 	DataStream.read(Buffer.data(), size);
 };
 

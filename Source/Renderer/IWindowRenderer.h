@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../Common.h"
+#include "../Image/Image.h"
+#include "../Core/GameEntity.h"
 
 namespace Renderer {
 	struct RendererParameters
@@ -20,5 +22,15 @@ namespace Renderer {
 		virtual void ClearWindow(const double deltaTime) = 0;
 		virtual void Update(const double deltaTime) = 0;
 		virtual void Render(const double deltaTime) = 0;
+
+		virtual Renderer::Material* CreateMaterial() = 0;
+		virtual void UploadTexture(Core::GameEntity* entity, Image::Image* image) = 0;
+
+	protected:
+		// Entities
+		std::vector<Core::GameEntity*> GameEntitites;
+
+		virtual void CreateShaderForEntity(Core::GameEntity* entity) = 0;
+		virtual void PrepareBuffers() = 0;
 	};
 }

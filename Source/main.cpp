@@ -1,7 +1,7 @@
 #include "Common.h"
 
-#include "Renderer/OpenGLRenderer.h"
-#include "Renderer/D3D11Renderer.h"
+#include "Renderer/OpenGL4/OpenGL4Renderer.h"
+#include "Renderer/D3D11/D3D11Renderer.h"
 
 struct WindowProperties
 {
@@ -36,7 +36,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	windowProperties.Height = 768;
 	windowProperties.Title = "OpenGL Window";
 	windowProperties.IsFullscreen = false;
-	windowProperties.Renderer = new Renderer::OpenGLRenderer();
+	windowProperties.Renderer = new Renderer::OpenGL4Renderer();
 
 	int result = CreateWindowWithRenderer(windowProperties, windowProperties.Renderer);
 

@@ -61,6 +61,33 @@
     <Filter Include="Source Files\Graphic\Model">
       <UniqueIdentifier>{7a359c90-5a0e-4dee-a23c-b777187b3432}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{fad2efd0-45da-4848-b1af-4843206b00c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{fc7fae68-8f41-4ff3-a5f3-352e378b3130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Entities">
+      <UniqueIdentifier>{4823c209-5275-4372-bc92-a5834962b3b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{c73aeafd-7f11-4ddf-91ed-6fcc941ba0e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Entities">
+      <UniqueIdentifier>{7946d8e1-2979-43c4-8018-08271e353400}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer\D3D11">
+      <UniqueIdentifier>{905c1e73-befd-40f7-bed2-7e019d4154c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\D3D11">
+      <UniqueIdentifier>{4ce7b660-f442-40bf-b34f-2c13d2d1b6ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer\OpenGL4">
+      <UniqueIdentifier>{c9562bf3-4118-414e-b9ee-0219b1e81836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Renderer\OpenGL4">
+      <UniqueIdentifier>{c9f048b1-02c8-4309-b1ea-49ff3d776d82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\main.cpp">
@@ -68,12 +95,6 @@
     </ClCompile>
     <ClCompile Include="..\source\Window.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\renderer\D3D11Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\renderer\OpenGLRenderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="..\source\filesystem\File.cpp">
       <Filter>Source Files\FileSystem</Filter>
@@ -83,6 +104,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Graphic\Model\ObjModel.cpp">
       <Filter>Source Files\Graphic\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\Entities\CubeEntity.cpp">
+      <Filter>Source Files\Game\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Renderer\D3D11\D3D11Renderer.cpp">
+      <Filter>Source Files\Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp">
+      <Filter>Source Files\Renderer\OpenGL4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,16 +125,10 @@
     <ClInclude Include="..\source\graphic\primitive\CubePrimitive.h">
       <Filter>Header Files\Graphic\Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\renderer\D3D11Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\filesystem\File.h">
       <Filter>Header Files\FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\source\renderer\IWindowRenderer.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\renderer\OpenGLRenderer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="..\source\math\Matrix4x4.h">
@@ -158,6 +182,30 @@
     <ClInclude Include="..\Source\Math\Vector2.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Core\IResource.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\GameEntity.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\Entities\CubeEntity.h">
+      <Filter>Header Files\Game\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\Material.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\D3D11\D3D11Material.h">
+      <Filter>Header Files\Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\D3D11\D3D11Renderer.h">
+      <Filter>Header Files\Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Material.h">
+      <Filter>Header Files\Renderer\OpenGL4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h">
+      <Filter>Header Files\Renderer\OpenGL4</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl">
@@ -177,7 +225,7 @@
     <FxCompile Include="..\source\shaders\hlsl\RotationVertex.hlsl">
       <Filter>Shaders\HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\source\shaders\hlsl\SolidColorPixel.hlsl">
+    <FxCompile Include="..\source\shaders\hlsl\SolidColorFragment.hlsl">
       <Filter>Shaders\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

@@ -125,16 +125,20 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Game\Entities\CubeEntity.cpp" />
     <ClCompile Include="..\Source\Graphic\Model\ObjModel.cpp" />
     <ClCompile Include="..\Source\Image\ImageBMP.cpp" />
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\filesystem\File.cpp" />
-    <ClCompile Include="..\source\renderer\D3D11Renderer.cpp" />
-    <ClCompile Include="..\source\renderer\OpenGLRenderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\D3D11\D3D11Renderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp" />
     <ClCompile Include="..\source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\Core\GameEntity.h" />
+    <ClInclude Include="..\Source\Core\IResource.h" />
     <ClInclude Include="..\source\filesystem\File.h" />
+    <ClInclude Include="..\Source\Game\Entities\CubeEntity.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h" />
     <ClInclude Include="..\source\graphic\ColorRGBA.h" />
     <ClInclude Include="..\Source\Graphic\Model\ObjModel.h" />
@@ -153,9 +157,12 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Math\Vector2.h" />
     <ClInclude Include="..\source\math\Vector3.h" />
     <ClInclude Include="..\source\math\Vector4.h" />
-    <ClInclude Include="..\source\renderer\D3D11Renderer.h" />
+    <ClInclude Include="..\Source\Renderer\D3D11\D3D11Material.h" />
+    <ClInclude Include="..\Source\Renderer\D3D11\D3D11Renderer.h" />
     <ClInclude Include="..\source\renderer\IWindowRenderer.h" />
-    <ClInclude Include="..\source\renderer\OpenGLRenderer.h" />
+    <ClInclude Include="..\Source\Renderer\Material.h" />
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Material.h" />
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h" />
     <ClInclude Include="..\Source\Types.h" />
     <ClInclude Include="..\source\Window.h" />
   </ItemGroup>
@@ -170,7 +177,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="..\source\shaders\hlsl\SolidColorPixel.hlsl">
+    <FxCompile Include="..\source\shaders\hlsl\SolidColorFragment.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>

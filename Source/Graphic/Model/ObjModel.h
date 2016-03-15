@@ -10,7 +10,7 @@ namespace Graphic
 {
 	namespace Model
 	{
-		class ObjModel
+		class ObjModel : Core::IResource
 		{
 		public:
 			std::vector<Vertex> Vertices;
