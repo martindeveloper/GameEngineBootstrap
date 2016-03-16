@@ -359,16 +359,17 @@ void OpenGL4Renderer::PrepareBuffers()
 	FrameBuffer = new Renderer::OpenGL4FrameBuffer(this);
 
 	// Constant buffer
-	CreateConstantBuffer();
+	CreateConstantBuffer<Graphic::Buffer::ConstantBuffer>(&UniformBuffer);
 
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	glBindVertexArray(NULL);
 }
 
-void OpenGL4Renderer::CreateConstantBuffer()
+template<typename T>
+void OpenGL4Renderer::CreateConstantBuffer(T* targetBuffer)
 {
-	SecureZeroMemory(&UniformBuffer, sizeof(Graphic::Buffer::ConstantBuffer));
+	SecureZeroMemory(targetBuffer, sizeof(T));
 }
 
 void OpenGL4Renderer::CreateBuffersForEntity(Core::GameEntity* entity)

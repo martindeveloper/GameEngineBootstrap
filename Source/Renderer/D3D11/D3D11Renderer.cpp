@@ -30,7 +30,9 @@ D3D11Renderer::~D3D11Renderer()
 
 	RasterizerState->Release();
 	SwapChain->Release();
-	BackBuffer->Release();
+
+	delete FrameBuffer;
+
 	Device->Release();
 	DeviceContext->Release();
 }
@@ -82,8 +84,6 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	D3D11_VIEWPORT viewport = { 0, 0, (float)Parameters.Width, (float)Parameters.Height, 0.0f, 1.0f };
 	DeviceContext->RSSetViewports(1, &viewport);
 
-	PrepareBuffers();
-
 	{
 		// Cube entity
 		Core::GameEntity* cube = new Game::Entities::CubeEntity("Cube1");
@@ -111,6 +111,8 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 			assert(!(FAILED(result)));
 
 			CreateShaderForEntity(entity);
+
+			CreateConstantBuffer<Graphic::Buffer::TransformBuffer>(&material->TransformBuffer);
 		}
 	}
 
@@ -129,7 +131,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 	Device->CreateRasterizerState(&rasterizerDescription, &RasterizerState);
 
-	CreateDepthBuffer();
+	PrepareBuffers();
 }
 
 void D3D11Renderer::CreateDepthBuffer()
@@ -143,7 +145,7 @@ void D3D11Renderer::CreateDepthBuffer()
 	D3D11_RENDER_TARGET_VIEW_DESC backBufferDescription;
 	ZeroMemory(&backBufferDescription, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
 
-	BackBuffer->GetDesc(&backBufferDescription);
+	FrameBuffer->BackBuffer->GetDesc(&backBufferDescription);
 
 	depthStencilDescription.Width = Parameters.Width;
 	depthStencilDescription.Height = Parameters.Height;
@@ -206,14 +208,14 @@ void D3D11Renderer::CreateDepthBuffer()
 	result = Device->CreateDepthStencilView(depthStencilBuffer, &descDSV, &DepthStencilView);
 
 	assert(!(FAILED(result)));
-
-	DeviceContext->OMSetRenderTargets(1, &BackBuffer, DepthStencilView);
 }
 
 void D3D11Renderer::ClearWindow(const double deltaTime)
 {
 	const FLOAT color[4] = { sin((FLOAT)deltaTime) * 0.5f + 0.5f, cos((FLOAT)deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f };
-	DeviceContext->ClearRenderTargetView(BackBuffer, color);
+
+	DeviceContext->ClearRenderTargetView(FrameBuffer->BackBuffer, color);
+	//DeviceContext->ClearRenderTargetView(FrameBuffer->FrontBuffer, color);
 
 	DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
@@ -224,7 +226,7 @@ void D3D11Renderer::Update(const double deltaTime)
 
 	// Modify constant values
 	{
-		static unsigned __int32 frameCounter = 0;
+		static uint32 frameCounter = 0;
 
 		D3D11_MAPPED_SUBRESOURCE constantBufferMappedResource;
 		result = DeviceContext->Map(UniformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &constantBufferMappedResource);
@@ -248,7 +250,19 @@ void D3D11Renderer::Update(const double deltaTime)
 
 	for (auto entity : GameEntitites)
 	{
+		Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(entity->GetMaterial());
+
 		entity->OnUpdate(deltaTime);
+
+		// Pass new transform values to shader
+		D3D11_MAPPED_SUBRESOURCE transformBufferMappedResource;
+		result = DeviceContext->Map(material->TransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformBufferMappedResource);
+		Graphic::Buffer::TransformBuffer* mappedTransformBuffer = (Graphic::Buffer::TransformBuffer*)transformBufferMappedResource.pData;
+		
+		mappedTransformBuffer->Position = material->Transform.Position;
+		mappedTransformBuffer->Scale = material->Transform.Scale;
+
+		DeviceContext->Unmap(material->TransformBuffer, 0);
 	}
 }
 
@@ -258,6 +272,8 @@ void D3D11Renderer::Render(const double deltaTime)
 
 	UINT stride = 0;
 	UINT offset = 0;
+
+	FrameBuffer->Bind();
 
 	for (auto entity : GameEntitites)
 	{
@@ -278,12 +294,14 @@ void D3D11Renderer::Render(const double deltaTime)
 
 		// Draw
 		DeviceContext->Draw(entity->GetVerticies()->size(), 0);
-
-		// Swap
-		result = SwapChain->Present(0, 0);
-
-		assert(!(FAILED(result)));
 	}
+
+	FrameBuffer->Unbind();
+
+	// Swap
+	result = SwapChain->Present(0, 0);
+
+	assert(!(FAILED(result)));
 }
 
 void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
@@ -371,9 +389,12 @@ Renderer::Material* D3D11Renderer::CreateMaterial()
 
 void D3D11Renderer::PrepareBuffers()
 {
-	CreateBackBuffer();
+	FrameBuffer = new D3D11FrameBuffer(this);
+	FrameBuffer->Create();
 
-	CreateConstantBuffer();
+	CreateDepthBuffer();
+
+	CreateConstantBuffer<Graphic::Buffer::ConstantBuffer>(&UniformBuffer);
 }
 
 void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
@@ -422,22 +443,6 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 	assert(!(FAILED(result)));
 }
 
-void D3D11Renderer::CreateBackBuffer()
-{
-	HRESULT result = S_OK;
-
-	ID3D11Texture2D *pBackBuffer;
-
-	result = SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
-	result = Device->CreateRenderTargetView(pBackBuffer, NULL, &BackBuffer);
-
-	pBackBuffer->Release();
-
-	DeviceContext->OMSetRenderTargets(1, &BackBuffer, NULL);
-
-	assert(!(FAILED(result)));
-}
-
 void D3D11Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
 {
 	HRESULT result = S_OK;
@@ -457,19 +462,18 @@ void D3D11Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
 	assert(!(FAILED(result)));
 }
 
-void D3D11Renderer::CreateConstantBuffer()
+template<typename T>
+void D3D11Renderer::CreateConstantBuffer(ID3D11Buffer** targetBuffer)
 {
 	HRESULT result = S_OK;
 
-	Graphic::Buffer::ConstantBuffer buffer;
-
-	buffer.ModelViewProjectionMatrix = { };
-	buffer.FrameNumber = 0;
+	T buffer;
+	ZeroMemory(&buffer, sizeof(T));
 
 	D3D11_BUFFER_DESC bufferDescription;
 	ZeroMemory(&bufferDescription, sizeof(bufferDescription));
 
-	bufferDescription.ByteWidth = sizeof(Graphic::Buffer::ConstantBuffer);
+	bufferDescription.ByteWidth = sizeof(T);
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -478,9 +482,9 @@ void D3D11Renderer::CreateConstantBuffer()
 	ZeroMemory(&subResourceData, sizeof(subResourceData));
 	subResourceData.pSysMem = &buffer;
 
-	result = Device->CreateBuffer(&bufferDescription, &subResourceData, &UniformBuffer);
+	result = Device->CreateBuffer(&bufferDescription, &subResourceData, targetBuffer);
 
-	DeviceContext->VSSetConstantBuffers(0, 1, &UniformBuffer);
+	DeviceContext->VSSetConstantBuffers(0, 1, targetBuffer);
 
 	assert(!(FAILED(result)));
 }

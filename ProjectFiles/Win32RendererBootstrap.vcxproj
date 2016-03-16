@@ -130,6 +130,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClCompile Include="..\Source\Image\ImageBMP.cpp" />
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\filesystem\File.cpp" />
+    <ClCompile Include="..\Source\Renderer\D3D11\D3D11FrameBuffer.cpp" />
     <ClCompile Include="..\Source\Renderer\D3D11\D3D11Renderer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp" />
@@ -141,6 +142,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\source\filesystem\File.h" />
     <ClInclude Include="..\Source\Game\Entities\CubeEntity.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="..\Source\Graphic\Buffer\TransformBuffer.h" />
     <ClInclude Include="..\source\graphic\ColorRGBA.h" />
     <ClInclude Include="..\Source\Graphic\Model\ObjModel.h" />
     <ClInclude Include="..\source\graphic\primitive\CubePrimitive.h" />
@@ -158,8 +160,10 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Math\Vector2.h" />
     <ClInclude Include="..\source\math\Vector3.h" />
     <ClInclude Include="..\source\math\Vector4.h" />
+    <ClInclude Include="..\Source\Renderer\D3D11\D3D11FrameBuffer.h" />
     <ClInclude Include="..\Source\Renderer\D3D11\D3D11Material.h" />
     <ClInclude Include="..\Source\Renderer\D3D11\D3D11Renderer.h" />
+    <ClInclude Include="..\Source\Renderer\IFrameBuffer.h" />
     <ClInclude Include="..\source\renderer\IWindowRenderer.h" />
     <ClInclude Include="..\Source\Renderer\Material.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.h" />

@@ -13,6 +13,7 @@
 
 #include "../../Math/Math.h"
 
+#include "D3D11FrameBuffer.h"
 #include "D3D11Material.h"
 
 #include "../../Graphic/Vertex.h"
@@ -25,9 +26,16 @@
 
 namespace Renderer
 {
+	class D3D11FrameBuffer;
+
 	class D3D11Renderer : public IWindowRenderer
 	{
 	public:
+		IDXGISwapChain* SwapChain;
+		ID3D11Device* Device;
+		ID3D11DeviceContext* DeviceContext;
+		ID3D11DepthStencilView* DepthStencilView;
+
 		D3D11Renderer();
 		virtual ~D3D11Renderer();
 
@@ -40,12 +48,8 @@ namespace Renderer
 		void UploadTexture(Core::GameEntity* entity, Image::Image* image) override;
 
 	private:
-		IDXGISwapChain* SwapChain;
-		ID3D11Device* Device;
-		ID3D11DeviceContext* DeviceContext;
-		ID3D11RenderTargetView* BackBuffer;
+		D3D11FrameBuffer* FrameBuffer;
 		ID3D11RasterizerState* RasterizerState;
-		ID3D11DepthStencilView* DepthStencilView;
 
 		// Global buffers
 		ID3D11Buffer* UniformBuffer;
@@ -54,10 +58,12 @@ namespace Renderer
 		std::vector<Renderer::D3D11Material*> Materials;
 
 		void PrepareBuffers() override;
-		void CreateConstantBuffer() override;
+
+		template<typename T>
+		void CreateConstantBuffer(ID3D11Buffer** targetBuffer);
+
 		void CreateShaderForEntity(Core::GameEntity* entity) override;
 
-		void CreateBackBuffer();
 		void CreateVertexBufferForEntity(Core::GameEntity* entity);
 		void CreateDepthBuffer();
 	};

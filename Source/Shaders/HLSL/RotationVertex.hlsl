@@ -4,6 +4,12 @@ cbuffer ConstantBuffer : register(b0)
 	uint FrameNumber;
 };
 
+cbuffer TransformBuffer : register(b1)
+{
+	float3 Position;
+	float3 Scale;
+};
+
 struct VS_INPUT
 {
 	float3 Position : VERTEX_POSITION0;
@@ -26,6 +32,8 @@ VS_OUTPUT main(VS_INPUT input)
 
 	float x = (input.Position.x * cos(radians)) + (input.Position.y * sin(radians));
 	float y = (input.Position.x * sin(radians)) - (input.Position.y * cos(radians));
+
+	//float3 vertexPosition = (float3(x, y, input.Position.z) + Position) * Scale;
 
 	vertexStageOutput.Position = mul(ModelViewProjectionMatrix, float4(x, y, input.Position.z, 1.0f));
 	vertexStageOutput.Diffuse = input.Diffuse;

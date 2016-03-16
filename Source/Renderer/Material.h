@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Common.h"
+#include "../Graphic/Buffer/TransformBuffer.h"
 
 namespace Renderer
 {
@@ -8,6 +9,8 @@ namespace Renderer
 	{
 	public:
 		virtual ~Material() {};
+
+		Graphic::Buffer::TransformBuffer Transform;
 
 		std::string VertexShader;
 		std::string PixelShader;

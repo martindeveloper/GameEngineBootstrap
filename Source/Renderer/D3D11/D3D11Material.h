@@ -23,6 +23,7 @@ namespace Renderer
 			VertexBuffer->Release();
 		}
 
+		ID3D11Buffer* TransformBuffer;
 		ID3D11Buffer* VertexBuffer;
 
 		ID3D11VertexShader* VertexShader;

@@ -2,12 +2,13 @@
 
 #include "../../Common.h"
 #include "OpenGL4Renderer.h"
+#include "../IFrameBuffer.h"
 
 namespace Renderer
 {
 	class OpenGL4Renderer;
 
-	class OpenGL4FrameBuffer
+	class OpenGL4FrameBuffer : IFrameBuffer
 	{
 	public:
 		// TODO(martin.pernica): Use data struct for this pairs
@@ -20,10 +21,10 @@ namespace Renderer
 		OpenGL4FrameBuffer(Renderer::OpenGL4Renderer* renderer);
 		virtual ~OpenGL4FrameBuffer();
 
-		void Create();
-		void Bind();
-		void Unbind();
-		void Draw();
+		void Create() override;
+		void Bind() override;
+		void Unbind() override;
+		void Draw() override;
 
 		void SwitchProstProcessEffect(const char* vertexShaderName, const char* fragmentShaderName);
 

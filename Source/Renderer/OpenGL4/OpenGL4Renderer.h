@@ -58,7 +58,10 @@ namespace Renderer
 		std::vector<Renderer::OpenGL4Material*> Materials;
 
 		void PrepareBuffers() override;
-		void CreateConstantBuffer() override;
+
+		template<typename T>
+		void CreateConstantBuffer(T* targetBuffer);
+
 		void CreateShaderForEntity(Core::GameEntity* entity) override;
 		void CreateBuffersForEntity(Core::GameEntity* entity);
 	};
