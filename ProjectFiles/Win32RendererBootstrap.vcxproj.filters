@@ -114,6 +114,9 @@
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp">
       <Filter>Source Files\Renderer\OpenGL4</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.cpp">
+      <Filter>Source Files\Renderer\OpenGL4</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Window.h">
@@ -206,6 +209,9 @@
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h">
       <Filter>Header Files\Renderer\OpenGL4</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.h">
+      <Filter>Header Files\Renderer\OpenGL4</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl">
@@ -218,6 +224,12 @@
       <Filter>Shaders\GLSL</Filter>
     </None>
     <None Include="..\source\shaders\glsl\SimpleFragment.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\Source\Shaders\GLSL\ScreenFragment.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
+    <None Include="..\Source\Shaders\GLSL\ScreenVertex.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
   </ItemGroup>

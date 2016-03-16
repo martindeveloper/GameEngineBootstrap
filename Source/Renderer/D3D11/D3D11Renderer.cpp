@@ -311,7 +311,7 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
 
-	constexpr uint32 bytesPerPixel = 32 / 8; // NOTE(martin.pernica): 24 is hardcoded value from BMP header. 
+	constexpr uint32 bytesPerPixel = 32 / 8; // NOTE(martin.pernica): 34 is hardcoded value from BMP header. 
 	const uint32 pitch = bytesPerPixel * image->GetWidth();
 
 	D3D11_SUBRESOURCE_DATA textureSubResource;

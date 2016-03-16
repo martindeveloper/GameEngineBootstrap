@@ -131,6 +131,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\filesystem\File.cpp" />
     <ClCompile Include="..\Source\Renderer\D3D11\D3D11Renderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp" />
     <ClCompile Include="..\source\Window.cpp" />
   </ItemGroup>
@@ -161,6 +162,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Renderer\D3D11\D3D11Renderer.h" />
     <ClInclude Include="..\source\renderer\IWindowRenderer.h" />
     <ClInclude Include="..\Source\Renderer\Material.h" />
+    <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Material.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h" />
     <ClInclude Include="..\Source\Types.h" />
@@ -168,6 +170,8 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\shaders\glsl\RotationVertex.glsl" />
+    <None Include="..\Source\Shaders\GLSL\ScreenFragment.glsl" />
+    <None Include="..\Source\Shaders\GLSL\ScreenVertex.glsl" />
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl" />
     <None Include="..\source\shaders\glsl\SimpleFragment.glsl" />
     <None Include="..\source\shaders\glsl\SimpleVertex.glsl" />

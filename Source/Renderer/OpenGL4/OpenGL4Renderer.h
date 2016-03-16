@@ -11,11 +11,7 @@
 #include "../../Graphic/Buffer/ConstantBuffer.h"
 #include "../../Math/Math.h"
 
-// Custom types
-typedef uint32 OpenGL4Buffer;
-typedef uint32 OpenGL4ShaderProgram;
-typedef uint32 OpenGL4Texture;
-
+#include "OpenGL4FrameBuffer.h"
 #include "OpenGL4Material.h"
 
 #include "../../Graphic/Vertex.h"
@@ -31,24 +27,32 @@ typedef uint32 OpenGL4Texture;
 #endif
 #pragma comment(lib, "opengl32")
 
-namespace Renderer{
+namespace Renderer
+{
+	class OpenGL4FrameBuffer;
+
 	class OpenGL4Renderer : public IWindowRenderer
 	{
 	public:
 		OpenGL4Renderer();
 		virtual ~OpenGL4Renderer();
 
-		void BeforeStart(HDC WindowDeviceContext, const bool isWindowed) override;
+		void BeforeStart(HDC windowDeviceContext, const bool isWindowed) override;
 		void ClearWindow(const double deltaTime) override;
 		void Update(const double deltaTime) override;
 		void Render(const double deltaTime) override;
 		Renderer::Material* CreateMaterial() override;
 		void UploadTexture(Core::GameEntity* entity, Image::Image* image) override;
 
+		GLint CompileShader(const char* path, GLenum type);
+		GLint CreateShaderProgram(GLint vertexShader, GLint fragmentShader);
+
 	private:
+		HDC WindowDeviceContext;
+
 		// Global buffers
+		Renderer::OpenGL4FrameBuffer* FrameBuffer;
 		Graphic::Buffer::ConstantBuffer UniformBuffer;
-		GLuint VAO;
 
 		// Materials
 		std::vector<Renderer::OpenGL4Material*> Materials;
@@ -56,9 +60,6 @@ namespace Renderer{
 		void PrepareBuffers() override;
 		void CreateConstantBuffer() override;
 		void CreateShaderForEntity(Core::GameEntity* entity) override;
-
-		GLint CompileShader(const char* path, GLenum type);
-		GLint CreateShaderProgram(GLint vertexShader, GLint fragmentShader);
-		void CreateVertexBufferForEntity(Core::GameEntity* entity);
+		void CreateBuffersForEntity(Core::GameEntity* entity);
 	};
 }

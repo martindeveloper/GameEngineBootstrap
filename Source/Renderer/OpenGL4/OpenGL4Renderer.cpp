@@ -24,11 +24,13 @@ OpenGL4Renderer::~OpenGL4Renderer()
 
 	GameEntitites.clear();
 
-	glDeleteBuffers(1, &VAO);
+	delete FrameBuffer;
 }
 
-void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
+void OpenGL4Renderer::BeforeStart(HDC windowDeviceContext, const bool isWindowed)
 {
+	this->WindowDeviceContext = windowDeviceContext;
+
 	// Set pixel format
 	PIXELFORMATDESCRIPTOR OpenGLPixelFormatDescriptor;
 	ZeroMemory(&OpenGLPixelFormatDescriptor, sizeof(PIXELFORMATDESCRIPTOR));
@@ -42,15 +44,15 @@ void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed
 	OpenGLPixelFormatDescriptor.cStencilBits = 8;
 	OpenGLPixelFormatDescriptor.iLayerType = PFD_MAIN_PLANE;
 
-	int WindowPixelFormat = ChoosePixelFormat(WindowDeviceContext, &OpenGLPixelFormatDescriptor);
+	int WindowPixelFormat = ChoosePixelFormat(windowDeviceContext, &OpenGLPixelFormatDescriptor);
 
-	SetPixelFormat(WindowDeviceContext, WindowPixelFormat, &OpenGLPixelFormatDescriptor);
+	SetPixelFormat(windowDeviceContext, WindowPixelFormat, &OpenGLPixelFormatDescriptor);
 
 	// Create OpenGL context
-	HGLRC FakeOpenGLRenderingContextHandle = wglCreateContext(WindowDeviceContext);
+	HGLRC FakeOpenGLRenderingContextHandle = wglCreateContext(windowDeviceContext);
 
 	// Make OpenGL current
-	if (!wglMakeCurrent(WindowDeviceContext, FakeOpenGLRenderingContextHandle))
+	if (!wglMakeCurrent(windowDeviceContext, FakeOpenGLRenderingContextHandle))
 	{
 		DWORD error = GetLastError();
 		OutputDebugStringA("Can not make current OpenGL context");
@@ -79,24 +81,14 @@ void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed
 		0
 	};
 
-	HGLRC OpenGLRenderingContextHandle = wglCreateContextAttribsARB(WindowDeviceContext, 0, attribs);
+	HGLRC OpenGLRenderingContextHandle = wglCreateContextAttribsARB(windowDeviceContext, 0, attribs);
 	wglMakeCurrent(NULL, NULL);
 	BOOL isTempContextDeleted = wglDeleteContext(FakeOpenGLRenderingContextHandle);
-	BOOL isContextActive = wglMakeCurrent(WindowDeviceContext, OpenGLRenderingContextHandle);
+	BOOL isContextActive = wglMakeCurrent(windowDeviceContext, OpenGLRenderingContextHandle);
 
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-
-	// Enable blending
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// Create VAO
 	PrepareBuffers();
 
-	// Bind VAO
-	glBindVertexArray(VAO);
+	FrameBuffer->Create();
 
 	{
 		// Cube entity
@@ -112,11 +104,13 @@ void OpenGL4Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed
 
 			std::vector<Graphic::Vertex>* verticies = entity->GetVerticies();
 
-			CreateVertexBufferForEntity(entity);
+			CreateBuffersForEntity(entity);
 
 			Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
 
+			glBindVertexArray(material->VertexArrayObject);
 			glBindBuffer(GL_ARRAY_BUFFER, material->VertexBuffer);
+
 			glBufferData(GL_ARRAY_BUFFER, entity->GetVertexBufferWidth(), &verticies->at(0), GL_STATIC_DRAW);
 
 			CreateShaderForEntity(entity);
@@ -151,12 +145,17 @@ void OpenGL4Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* imag
 
 void OpenGL4Renderer::ClearWindow(const double deltaTime)
 {
+	FrameBuffer->Bind();
+
 	glClearColor((float)sin(deltaTime) * 0.5f + 0.5f, (float)cos(deltaTime) * 0.5f + 0.5f, 0.0f, 1.0f);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	if (glGetError() != GL_NO_ERROR)
+	GLenum result = glGetError();
+
+	if (result != GL_NO_ERROR)
 	{
+		DebugBreak();
 		throw new std::exception("OpenGL renderer error!");
 	}
 }
@@ -189,14 +188,23 @@ void OpenGL4Renderer::Render(const double deltaTime)
 {
 	glViewport(0, 0, Parameters.Width, Parameters.Height);
 
+	FrameBuffer->Bind();
+
+	// Enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Enable depth test
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
 	GLsizei stride = 0;
 
 	for (auto entity : GameEntitites)
 	{
 		Renderer::OpenGL4Material* entityMaterial = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
 
-		glBindVertexArray(VAO);
-
+		glBindVertexArray(entityMaterial->VertexArrayObject);
 		glBindBuffer(GL_ARRAY_BUFFER, entityMaterial->VertexBuffer);
 
 		const uint32 shaderProgram = entityMaterial->ShaderProgramId;
@@ -250,6 +258,10 @@ void OpenGL4Renderer::Render(const double deltaTime)
 			DebugBreak();
 		}
 	}
+
+	FrameBuffer->Draw();
+
+	//SwapBuffers(WindowDeviceContext);
 }
 
 Renderer::Material* OpenGL4Renderer::CreateMaterial()
@@ -343,10 +355,10 @@ GLint OpenGL4Renderer::CreateShaderProgram(GLint vertexShader, GLint fragmentSha
 
 void OpenGL4Renderer::PrepareBuffers()
 {
-	// VAO
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	// Framebuffer
+	FrameBuffer = new Renderer::OpenGL4FrameBuffer(this);
 
+	// Constant buffer
 	CreateConstantBuffer();
 
 	// Unbind buffers
@@ -359,11 +371,14 @@ void OpenGL4Renderer::CreateConstantBuffer()
 	SecureZeroMemory(&UniformBuffer, sizeof(Graphic::Buffer::ConstantBuffer));
 }
 
-void OpenGL4Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
+void OpenGL4Renderer::CreateBuffersForEntity(Core::GameEntity* entity)
 {
 	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
 
+	glGenVertexArrays(1, &material->VertexArrayObject);
 	glGenBuffers(1, &material->VertexBuffer);
+
+	assert(glGetError() == GL_NO_ERROR);
 }
 
 void OpenGL4Renderer::CreateShaderForEntity(Core::GameEntity* entity)

@@ -11,10 +11,12 @@ namespace Renderer
 		virtual ~OpenGL4Material()
 		{
 			glDeleteBuffers(1, &VertexBuffer);
+			glDeleteVertexArrays(1, &VertexArrayObject);
 			glDeleteProgram(ShaderProgramId);
 			glDeleteTextures(1, &DiffuseTextureId);
 		}
 		
+		OpenGL4Buffer VertexArrayObject;
 		OpenGL4Buffer VertexBuffer;
 		OpenGL4Texture DiffuseTextureId = 0;
 		OpenGL4ShaderProgram ShaderProgramId = 0;
