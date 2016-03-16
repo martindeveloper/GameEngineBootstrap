@@ -170,6 +170,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\shaders\glsl\RotationVertex.glsl" />
+    <None Include="..\Source\Shaders\GLSL\ScreenBlurFragment.glsl" />
     <None Include="..\Source\Shaders\GLSL\ScreenFragment.glsl" />
     <None Include="..\Source\Shaders\GLSL\ScreenVertex.glsl" />
     <None Include="..\source\shaders\glsl\SolidColorFragment.glsl" />

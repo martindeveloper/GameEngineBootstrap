@@ -164,7 +164,7 @@ void OpenGL4Renderer::Update(const double deltaTime)
 {
 	// Modify constant values
 	{
-		static unsigned __int32 frameCounter = 0;
+		static uint32 frameCounter = 0;
 
 		const glm::mat4 projectionMatrix = glm::perspective(glm::radians(45.0f), (float)Parameters.Width / (float)Parameters.Height, 0.1f, 100.0f);
 		const glm::mat4 viewMatrix = glm::lookAt(glm::vec3(4, 3, -3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));

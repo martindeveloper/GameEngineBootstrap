@@ -232,6 +232,9 @@
     <None Include="..\Source\Shaders\GLSL\ScreenVertex.glsl">
       <Filter>Shaders\GLSL</Filter>
     </None>
+    <None Include="..\Source\Shaders\GLSL\ScreenBlurFragment.glsl">
+      <Filter>Shaders\GLSL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\source\shaders\hlsl\RotationVertex.hlsl">

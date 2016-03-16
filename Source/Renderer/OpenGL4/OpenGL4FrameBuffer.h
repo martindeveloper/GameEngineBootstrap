@@ -10,6 +10,13 @@ namespace Renderer
 	class OpenGL4FrameBuffer
 	{
 	public:
+		// TODO(martin.pernica): Use data struct for this pairs
+		const char* PostProcessDefaultVertex = "ScreenVertex.glsl";
+		const char* PostProcessDefaultFragment = "ScreenFragment.glsl";
+
+		const char* PostProcessBlurVertex = "ScreenVertex.glsl";
+		const char* PostProcessBlurFragment = "ScreenBlurFragment.glsl";
+
 		OpenGL4FrameBuffer(Renderer::OpenGL4Renderer* renderer);
 		virtual ~OpenGL4FrameBuffer();
 
@@ -17,6 +24,8 @@ namespace Renderer
 		void Bind();
 		void Unbind();
 		void Draw();
+
+		void SwitchProstProcessEffect(const char* vertexShaderName, const char* fragmentShaderName);
 
 	private:
 		void PrepareScreenQuad();

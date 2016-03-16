@@ -78,6 +78,22 @@ void OpenGL4FrameBuffer::CreateBuffer()
 	assert(glGetError() == GL_NO_ERROR);
 }
 
+void OpenGL4FrameBuffer::SwitchProstProcessEffect(const char* vertexShaderName, const char* fragmentShaderName)
+{
+	if (ScreenShaderProgramId >= 0)
+	{
+		glDeleteProgram(ScreenShaderProgramId);
+	}
+
+	GLuint vertexShader = Renderer->CompileShader(vertexShaderName, GL_VERTEX_SHADER);
+	GLuint fragmentShader = Renderer->CompileShader(fragmentShaderName, GL_FRAGMENT_SHADER);
+
+	ScreenShaderProgramId = Renderer->CreateShaderProgram(vertexShader, fragmentShader);
+
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+}
+
 void OpenGL4FrameBuffer::PrepareScreenQuad()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
@@ -92,13 +108,7 @@ void OpenGL4FrameBuffer::PrepareScreenQuad()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ScreenQuadVerticies), ScreenQuadVerticies, GL_STATIC_DRAW);
 
 	// Shaders
-	const char* vertexShaderName = "ScreenVertex.glsl";
-	const char* fragmentShaderName = "ScreenFragment.glsl";
-
-	GLuint vertexShader = Renderer->CompileShader(vertexShaderName, GL_VERTEX_SHADER);
-	GLuint fragmentShader = Renderer->CompileShader(fragmentShaderName, GL_FRAGMENT_SHADER);
-
-	ScreenShaderProgramId = Renderer->CreateShaderProgram(vertexShader, fragmentShader);
+	SwitchProstProcessEffect(PostProcessDefaultVertex, PostProcessBlurFragment);
 
 	glBindVertexArray(ScreenVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);
