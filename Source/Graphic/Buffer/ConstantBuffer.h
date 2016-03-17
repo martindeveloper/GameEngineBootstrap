@@ -8,8 +8,8 @@ namespace Graphic
 	{
 		struct alignas(16) ConstantBuffer
 		{
-			Math::Matrix4x4 ModelViewProjectionMatrix;
-			uint32 FrameNumber;
+			alignas(16) Math::Matrix4x4 ModelViewProjectionMatrix;
+			alignas(16) uint32 FrameNumber;
 		};
 	};
 };

@@ -22,6 +22,7 @@ void D3D11FrameBuffer::Create()
 void D3D11FrameBuffer::Bind()
 {
 	Renderer->DeviceContext->OMSetRenderTargets(1, &BackBuffer, Renderer->DepthStencilView);
+	Renderer->DeviceContext->OMSetDepthStencilState(Renderer->DepthStencilState, 1);
 }
 
 void D3D11FrameBuffer::Unbind()

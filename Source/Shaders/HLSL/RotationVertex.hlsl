@@ -28,14 +28,16 @@ VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT vertexStageOutput;
 
-	float radians = ((FrameNumber/100) * 3.14159f) / 180.0f;
+	float radians = ((FrameNumber / 100) * 3.14159f) / 180.0f;
 
-	float x = (input.Position.x * cos(radians)) + (input.Position.y * sin(radians));
-	float y = (input.Position.x * sin(radians)) - (input.Position.y * cos(radians));
+	float3 basePosition = input.Position * Scale;
 
-	//float3 vertexPosition = (float3(x, y, input.Position.z) + Position) * Scale;
+	float x = (basePosition.x * cos(radians)) + (basePosition.y * sin(radians));
+	float y = (basePosition.x * sin(radians)) - (basePosition.y * cos(radians));
 
-	vertexStageOutput.Position = mul(ModelViewProjectionMatrix, float4(x, y, input.Position.z, 1.0f));
+	float3 vertexPosition = float3(x, y , basePosition.z);
+
+	vertexStageOutput.Position = mul(ModelViewProjectionMatrix, float4(vertexPosition, 1.0f));
 	vertexStageOutput.Diffuse = input.Diffuse;
 	vertexStageOutput.UV = input.UV;
 

@@ -243,6 +243,13 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		glUniformMatrix4fv(mvpUniform, 1, GL_FALSE, (const GLfloat*)&UniformBuffer.ModelViewProjectionMatrix);
 		glUniform1ui(frameCounterUniform, UniformBuffer.FrameNumber);
 
+		// Transform buffer
+		GLint positionUniform = glGetUniformLocation(shaderProgram, "Transform.Position");
+		GLint scaleUniform = glGetUniformLocation(shaderProgram, "Transform.Scale");
+
+		glUniform3fv(positionUniform, 1, (const GLfloat*)&entityMaterial->Transform.Position);
+		glUniform3fv(scaleUniform, 1, (const GLfloat*)&entityMaterial->Transform.Scale);
+
 		glDrawArrays(GL_TRIANGLES, 0, entity->GetVerticies()->size());
 
 		glDisableVertexAttribArray(attributeVertexPosition);

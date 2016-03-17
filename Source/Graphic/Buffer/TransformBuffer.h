@@ -8,8 +8,8 @@ namespace Graphic
 	{
 		struct alignas(16) TransformBuffer
 		{
-			Math::Vector3<float> Position;
-			Math::Vector3<float> Scale;
+			alignas(16) Math::Vector3<float> Position;
+			alignas(16) Math::Vector3<float> Scale;
 		};
 	};
 };

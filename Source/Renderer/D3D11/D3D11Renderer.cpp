@@ -136,6 +136,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 void D3D11Renderer::CreateDepthBuffer()
 {
+	// NOTE(martin.pernica): Move this into separate class
 	HRESULT result = S_OK;
 
 	ID3D11Texture2D* depthStencilBuffer = NULL;
@@ -189,13 +190,9 @@ void D3D11Renderer::CreateDepthBuffer()
 	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Create depth stencil state
-	ID3D11DepthStencilState* pDSState;
-	result = Device->CreateDepthStencilState(&dsDesc, &pDSState);
+	result = Device->CreateDepthStencilState(&dsDesc, &DepthStencilState);
 
 	assert(!(FAILED(result)));
-
-	// Bind depth stencil state
-	DeviceContext->OMSetDepthStencilState(pDSState, 1);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 	ZeroMemory(&descDSV, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -281,6 +278,9 @@ void D3D11Renderer::Render(const double deltaTime)
 
 		DeviceContext->VSSetShader(material->VertexShader, nullptr, 0);
 		DeviceContext->PSSetShader(material->PixelShader, nullptr, 0);
+
+		DeviceContext->VSSetConstantBuffers(0, 1, &UniformBuffer);
+		DeviceContext->VSSetConstantBuffers(1, 1, &material->TransformBuffer);
 
 		stride = entity->GetVertexBufferStride();
 
@@ -477,14 +477,16 @@ void D3D11Renderer::CreateConstantBuffer(ID3D11Buffer** targetBuffer)
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDescription.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescription.MiscFlags = 0;
+	bufferDescription.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA subResourceData;
 	ZeroMemory(&subResourceData, sizeof(subResourceData));
 	subResourceData.pSysMem = &buffer;
+	subResourceData.SysMemPitch = 0;
+	subResourceData.SysMemSlicePitch = 0;
 
 	result = Device->CreateBuffer(&bufferDescription, &subResourceData, targetBuffer);
-
-	DeviceContext->VSSetConstantBuffers(0, 1, targetBuffer);
 
 	assert(!(FAILED(result)));
 }

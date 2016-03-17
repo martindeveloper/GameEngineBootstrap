@@ -21,7 +21,7 @@ void CubeEntity::OnLoad()
 	CurrentMaterial = Renderer->CreateMaterial();
 	CurrentMaterial->VertexShader = "RotationVertex";
 	CurrentMaterial->PixelShader = "SolidColorFragment";
-	CurrentMaterial->Transform = { { 1, 1, 1 }, { 1, 1, 1 } };
+	CurrentMaterial->Transform = { { 0, 0, 0 }, { 2, 2, 2 } };
 
 	// Texture
 	FileSystem::File sourceFile("lenaColor512A.bmp");

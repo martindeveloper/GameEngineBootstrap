@@ -108,7 +108,7 @@ void OpenGL4FrameBuffer::PrepareScreenQuad()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ScreenQuadVerticies), ScreenQuadVerticies, GL_STATIC_DRAW);
 
 	// Shaders
-	SwitchProstProcessEffect(PostProcessDefaultVertex, PostProcessBlurFragment);
+	SwitchProstProcessEffect(PostProcessDefaultVertex, PostProcessDefaultFragment);
 
 	glBindVertexArray(ScreenVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, ScreenVBO);

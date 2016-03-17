@@ -34,6 +34,7 @@ namespace Renderer
 		IDXGISwapChain* SwapChain;
 		ID3D11Device* Device;
 		ID3D11DeviceContext* DeviceContext;
+		ID3D11DepthStencilState* DepthStencilState;
 		ID3D11DepthStencilView* DepthStencilView;
 
 		D3D11Renderer();
