@@ -24,11 +24,13 @@ uniform TransformBuffer Transform;
 out vec4 fragmentColor;
 out vec2 fragmentUV;
 
+const float PI = 3.1415926535897932384626433832795;
+
 void main()
 {
-	float radians = (UniformBuffer.FrameNumber * 3.14159f) / 180.0f;
+	float radians = (UniformBuffer.FrameNumber * PI) / 180.0f;
 
-	vec3 basePosition = vertexPosition * Transform.Scale;
+	vec3 basePosition = (vertexPosition * Transform.Scale) + Transform.Position;
 
 	float x = (basePosition.x * cos(radians)) + (basePosition.y * sin(radians));
 	float y = (basePosition.x * sin(radians)) - (basePosition.y * cos(radians));

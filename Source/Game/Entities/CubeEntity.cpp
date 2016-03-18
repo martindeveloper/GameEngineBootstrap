@@ -21,7 +21,7 @@ void CubeEntity::OnLoad()
 	CurrentMaterial = Renderer->CreateMaterial();
 	CurrentMaterial->VertexShader = "RotationVertex";
 	CurrentMaterial->PixelShader = "SolidColorFragment";
-	CurrentMaterial->Transform = { { 0, 0, 0 }, { 2, 2, 2 } };
+	CurrentMaterial->Transform = { StartingPosition, { 0.5f, 0.5f, 0.5f } };
 
 	// Texture
 	FileSystem::File sourceFile("lenaColor512A.bmp");
@@ -32,7 +32,7 @@ void CubeEntity::OnLoad()
 
 void CubeEntity::OnUpdate(double deltaTime)
 {
-
+	CurrentMaterial->Transform.Position.X += sin(deltaTime) / 1000;
 }
 
 std::vector<Graphic::Vertex>* CubeEntity::GetVerticies() const

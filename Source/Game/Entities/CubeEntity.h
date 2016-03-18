@@ -27,6 +27,9 @@ namespace Game
 			uint32 GetVertexBufferWidth() const;
 			uint32 GetVertexBufferStride() const;
 
+			// TODO(martin.pernica): Remove this prop, only for testing
+			Math::Vector3<float> StartingPosition;
+
 		private:
 			Math::Vector3<float> Position;
 			Graphic::Model::ObjModel* CubeModel;

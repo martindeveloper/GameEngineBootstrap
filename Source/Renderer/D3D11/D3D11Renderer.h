@@ -54,6 +54,7 @@ namespace Renderer
 
 		// Global buffers
 		ID3D11Buffer* UniformBuffer;
+		ID3D11Buffer* TransformBuffer;
 
 		// Materials
 		std::vector<Renderer::D3D11Material*> Materials;

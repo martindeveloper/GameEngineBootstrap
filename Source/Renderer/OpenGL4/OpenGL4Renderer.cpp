@@ -92,8 +92,14 @@ void OpenGL4Renderer::BeforeStart(HDC windowDeviceContext, const bool isWindowed
 
 	{
 		// Cube entity
-		Core::GameEntity* cube = new Game::Entities::CubeEntity("Cube1");
-		GameEntitites.push_back(cube);
+		Game::Entities::CubeEntity* cube = new Game::Entities::CubeEntity("Cube1");
+		cube->StartingPosition = { -10.0f, 0, 0 };
+		GameEntitites.push_back((Core::GameEntity*)cube);
+
+		// 2nd
+		Game::Entities::CubeEntity* cube2 = new Game::Entities::CubeEntity("Cube2");
+		cube2->StartingPosition = { 0.0f, 0, 0 };
+		GameEntitites.push_back((Core::GameEntity*)cube2);
 	}
 
 	{

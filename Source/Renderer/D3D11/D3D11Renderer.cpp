@@ -86,8 +86,14 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 
 	{
 		// Cube entity
-		Core::GameEntity* cube = new Game::Entities::CubeEntity("Cube1");
-		GameEntitites.push_back(cube);
+		Game::Entities::CubeEntity* cube = new Game::Entities::CubeEntity("Cube1");
+		cube->StartingPosition = { -10.0f, 0, 0 };
+		GameEntitites.push_back((Core::GameEntity*)cube);
+
+		// 2nd
+		Game::Entities::CubeEntity* cube2 = new Game::Entities::CubeEntity("Cube2");
+		cube2->StartingPosition = { 0.0f, 0, 0 };
+		GameEntitites.push_back((Core::GameEntity*)cube2);
 	}
 
 	{
@@ -111,8 +117,6 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 			assert(!(FAILED(result)));
 
 			CreateShaderForEntity(entity);
-
-			CreateConstantBuffer<Graphic::Buffer::TransformBuffer>(&material->TransformBuffer);
 		}
 	}
 
@@ -250,16 +254,6 @@ void D3D11Renderer::Update(const double deltaTime)
 		Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(entity->GetMaterial());
 
 		entity->OnUpdate(deltaTime);
-
-		// Pass new transform values to shader
-		D3D11_MAPPED_SUBRESOURCE transformBufferMappedResource;
-		result = DeviceContext->Map(material->TransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformBufferMappedResource);
-		Graphic::Buffer::TransformBuffer* mappedTransformBuffer = (Graphic::Buffer::TransformBuffer*)transformBufferMappedResource.pData;
-		
-		mappedTransformBuffer->Position = material->Transform.Position;
-		mappedTransformBuffer->Scale = material->Transform.Scale;
-
-		DeviceContext->Unmap(material->TransformBuffer, 0);
 	}
 }
 
@@ -272,23 +266,45 @@ void D3D11Renderer::Render(const double deltaTime)
 
 	FrameBuffer->Bind();
 
+	// Transform buffer
+	D3D11_MAPPED_SUBRESOURCE transformBufferMappedResource;
+	Graphic::Buffer::TransformBuffer* mappedTransformBuffer;
+
+	// Set global buffers
+	DeviceContext->VSSetConstantBuffers(0, 1, &UniformBuffer);
+	DeviceContext->VSSetConstantBuffers(1, 1, &TransformBuffer);
+
+	// Set states
+	DeviceContext->RSSetState(RasterizerState);
+
+	//
+	Renderer::D3D11Material* material;
+
 	for (auto entity : GameEntitites)
 	{
-		Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(entity->GetMaterial());
+		material = static_cast<Renderer::D3D11Material*>(entity->GetMaterial());
 
+		// Map Transform buffer from GPU to CPU
+		DeviceContext->Map(TransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformBufferMappedResource);
+		mappedTransformBuffer = (Graphic::Buffer::TransformBuffer*)transformBufferMappedResource.pData;
+
+		mappedTransformBuffer->Position = material->Transform.Position;
+		mappedTransformBuffer->Scale = material->Transform.Scale;
+
+		// Return access to Transform buffer to GPU
+		DeviceContext->Unmap(TransformBuffer, 0);
+
+		// Set shaders
 		DeviceContext->VSSetShader(material->VertexShader, nullptr, 0);
 		DeviceContext->PSSetShader(material->PixelShader, nullptr, 0);
 
-		DeviceContext->VSSetConstantBuffers(0, 1, &UniformBuffer);
-		DeviceContext->VSSetConstantBuffers(1, 1, &material->TransformBuffer);
-
+		// Set vertex buffers
 		stride = entity->GetVertexBufferStride();
 
 		DeviceContext->IASetVertexBuffers(0, 1, &material->VertexBuffer, &stride, &offset);
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		DeviceContext->RSSetState(RasterizerState);
-
+		// Set samplers and resources
 		DeviceContext->PSSetSamplers(0, 1, &material->SamplerState);
 		DeviceContext->PSSetShaderResources(0, 1, &material->DiffuseTexture);
 
@@ -395,6 +411,7 @@ void D3D11Renderer::PrepareBuffers()
 	CreateDepthBuffer();
 
 	CreateConstantBuffer<Graphic::Buffer::ConstantBuffer>(&UniformBuffer);
+	CreateConstantBuffer<Graphic::Buffer::TransformBuffer>(&TransformBuffer);
 }
 
 void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
