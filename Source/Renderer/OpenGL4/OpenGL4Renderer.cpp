@@ -88,40 +88,90 @@ void OpenGL4Renderer::BeforeStart(HDC windowDeviceContext, const bool isWindowed
 
 	PrepareBuffers();
 
-	FrameBuffer->Create();
-
 	{
 		// Cube entity
 		Game::Entities::CubeEntity* cube = new Game::Entities::CubeEntity("Cube1");
-		cube->StartingPosition = { -10.0f, 0, 0 };
+		cube->StartingPosition = { 0, 0, 0 };
 		GameEntitites.push_back((Core::GameEntity*)cube);
 
-		// 2nd
 		Game::Entities::CubeEntity* cube2 = new Game::Entities::CubeEntity("Cube2");
-		cube2->StartingPosition = { 0.0f, 0, 0 };
+		cube2->StartingPosition = { -5.0f, 0, 0 };
 		GameEntitites.push_back((Core::GameEntity*)cube2);
 	}
 
+	LoadStaticEntities();
+	LoadDynamicEntities();
+}
+
+void OpenGL4Renderer::LoadStaticEntities()
+{
+	uint64 staticGeometrySize = 0;
+	uint64 bufferOffset = 0;
+
+	for (auto entity : GameEntitites)
 	{
-		for (auto entity : GameEntitites)
-		{
-			entity->SetRenderer(this);
-			entity->OnLoad();
+		// TODO(martin.pernica): Filter static geom into separate bucket
+		if (entity->IsStatic() == false) { continue; }
 
-			std::vector<Graphic::Vertex>* verticies = entity->GetVerticies();
+		entity->SetRenderer(this);
+		entity->OnLoad();
 
-			CreateBuffersForEntity(entity);
+		staticGeometrySize += entity->GetVertexBufferWidth();
 
-			Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
-
-			glBindVertexArray(material->VertexArrayObject);
-			glBindBuffer(GL_ARRAY_BUFFER, material->VertexBuffer);
-
-			glBufferData(GL_ARRAY_BUFFER, entity->GetVertexBufferWidth(), &verticies->at(0), GL_STATIC_DRAW);
-
-			CreateShaderForEntity(entity);
-		}
+		CreateShaderForEntity(entity);
 	}
+
+	glBindVertexArray(StaticGeometryVertexArrayObject);
+	glBindBuffer(GL_ARRAY_BUFFER, StaticGeometryBuffer);
+
+	// Fill buffer with zeroes
+	glBufferData(GL_ARRAY_BUFFER, staticGeometrySize, NULL, GL_STATIC_DRAW);
+
+	assert(glGetError() == GL_NO_ERROR);
+
+	for (auto entity : GameEntitites)
+	{
+		if (entity->IsStatic() == false) { continue; }
+
+		std::vector<Graphic::Vertex>* verticies = entity->GetVerticies();
+		uint32 width = entity->GetVertexBufferWidth();
+
+		glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, width, &verticies->at(0));
+
+		bufferOffset += width;
+	}
+
+	assert(glGetError() == GL_NO_ERROR);
+
+	// Unbind buffers
+	glBindBuffer(GL_ARRAY_BUFFER, NULL);
+	glBindVertexArray(NULL);
+}
+
+void OpenGL4Renderer::LoadDynamicEntities()
+{
+	for (auto entity : GameEntitites)
+	{
+		if (entity->IsStatic()) { continue; }
+
+		entity->SetRenderer(this);
+		entity->OnLoad();
+		
+		std::vector<Graphic::Vertex>* verticies = entity->GetVerticies();
+
+		CreateBuffersForEntity(entity);
+
+		Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
+
+		glBindVertexArray(material->DynamicVertexArrayObject);
+		glBindBuffer(GL_ARRAY_BUFFER, material->DynamicVertexBuffer);
+
+		glBufferData(GL_ARRAY_BUFFER, entity->GetVertexBufferWidth(), &verticies->at(0), GL_DYNAMIC_DRAW);
+
+		CreateShaderForEntity(entity);
+	}
+
+	assert(glGetError() == GL_NO_ERROR);
 
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
@@ -205,13 +255,23 @@ void OpenGL4Renderer::Render(const double deltaTime)
 	glDepthFunc(GL_LESS);
 
 	GLsizei stride = 0;
+	GLint drawOffset = 0;
+	GLenum error = 0;
 
 	for (auto entity : GameEntitites)
 	{
 		Renderer::OpenGL4Material* entityMaterial = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
 
-		glBindVertexArray(entityMaterial->VertexArrayObject);
-		glBindBuffer(GL_ARRAY_BUFFER, entityMaterial->VertexBuffer);
+		if (entity->IsStatic())
+		{
+			glBindVertexArray(StaticGeometryVertexArrayObject);
+			glBindBuffer(GL_ARRAY_BUFFER, StaticGeometryBuffer);
+		}
+		else
+		{
+			glBindVertexArray(entityMaterial->DynamicVertexArrayObject);
+			glBindBuffer(GL_ARRAY_BUFFER, entityMaterial->DynamicVertexBuffer);
+		}
 
 		const uint32 shaderProgram = entityMaterial->ShaderProgramId;
 
@@ -256,17 +316,27 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		glUniform3fv(positionUniform, 1, (const GLfloat*)&entityMaterial->Transform.Position);
 		glUniform3fv(scaleUniform, 1, (const GLfloat*)&entityMaterial->Transform.Scale);
 
-		glDrawArrays(GL_TRIANGLES, 0, entity->GetVerticies()->size());
+		uint32 drawCount = entity->GetVerticies()->size();
+
+		if (entity->IsStatic())
+		{
+			glDrawArrays(GL_TRIANGLES, drawOffset, drawCount);
+			drawOffset += drawCount;
+		}
+		else
+		{
+			glDrawArrays(GL_TRIANGLES, 0, drawCount);
+		}
 
 		glDisableVertexAttribArray(attributeVertexPosition);
 		glDisableVertexAttribArray(attributeVertexColor);
 		glDisableVertexAttribArray(attributeVertexUV);
 
-		GLenum err = glGetError();
+		error = glGetError();
 
-		if (err != GL_NO_ERROR)
+		if (error != GL_NO_ERROR)
 		{
-			const char* message = (const char*)gluErrorString(err);
+			const char* message = (const char*)gluErrorString(error);
 			OutputDebugStringA(message);
 			DebugBreak();
 		}
@@ -274,7 +344,7 @@ void OpenGL4Renderer::Render(const double deltaTime)
 
 	FrameBuffer->Draw();
 
-	//SwapBuffers(WindowDeviceContext);
+	SwapBuffers(WindowDeviceContext);
 }
 
 Renderer::Material* OpenGL4Renderer::CreateMaterial()
@@ -370,9 +440,14 @@ void OpenGL4Renderer::PrepareBuffers()
 {
 	// Framebuffer
 	FrameBuffer = new Renderer::OpenGL4FrameBuffer(this);
+	FrameBuffer->Create();
 
 	// Constant buffer
 	CreateConstantBuffer<Graphic::Buffer::ConstantBuffer>(&UniformBuffer);
+
+	// Create static geometrt buffer
+	glGenVertexArrays(1, &StaticGeometryVertexArrayObject);
+	glGenBuffers(1, &StaticGeometryBuffer);
 
 	// Unbind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, NULL);
@@ -389,8 +464,8 @@ void OpenGL4Renderer::CreateBuffersForEntity(Core::GameEntity* entity)
 {
 	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(entity->GetMaterial());
 
-	glGenVertexArrays(1, &material->VertexArrayObject);
-	glGenBuffers(1, &material->VertexBuffer);
+	glGenVertexArrays(1, &material->DynamicVertexArrayObject);
+	glGenBuffers(1, &material->DynamicVertexBuffer);
 
 	assert(glGetError() == GL_NO_ERROR);
 }
@@ -407,4 +482,22 @@ void OpenGL4Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 	GLuint fragmentShader = CompileShader(fragmentShaderName.c_str(), GL_FRAGMENT_SHADER);
 
 	material->ShaderProgramId = CreateShaderProgram(vertexShader, fragmentShader);
+
+#if 0
+	// Dump GLSL binary
+	std::string binaryName = material->VertexShader + material->PixelShader + ".bin";
+	GLint length = 0;
+	GLint writtenLenght = 0;
+
+	glGetProgramiv(material->ShaderProgramId, GL_PROGRAM_BINARY_LENGTH, &length);
+	char* binary = new char[length];
+	GLenum *binaryFormats = 0;
+
+	glGetProgramBinary(material->ShaderProgramId, length, &writtenLenght, (GLenum*)binaryFormats, binary);
+
+	std::ofstream binaryfile(binaryName);
+	binaryfile.write(binary, length);
+
+	delete[] binary;
+#endif
 }

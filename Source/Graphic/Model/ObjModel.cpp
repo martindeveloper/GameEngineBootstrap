@@ -129,11 +129,14 @@ void ObjModel::ParseLine(const char* line)
 		NormalIndices.push_back(normalIndex[1]);
 		NormalIndices.push_back(normalIndex[2]);
 	}
-	else {
+#if 0
+	else
+	{
 		OutputDebugString("\nObjModel: Line can not be parsed.\n");
 		OutputDebugString(line);
 		OutputDebugString("\n");
 	}
+#endif
 }
 
 void ObjModel::BuildVerticies()

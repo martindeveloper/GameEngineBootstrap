@@ -32,6 +32,5 @@ namespace Renderer {
 
 		virtual void CreateShaderForEntity(Core::GameEntity* entity) = 0;
 		virtual void PrepareBuffers() = 0;
-		//virtual void CreateConstantBuffer() = 0;
 	};
 }

@@ -19,6 +19,7 @@ namespace Core
 		GameEntity(std::string name) : Name(name) {};
 		virtual ~GameEntity() {};
 
+		virtual bool IsStatic() const { return true; };
 		virtual void OnLoad() {};
 		virtual void OnUpdate(const double deltaTime) {};
 

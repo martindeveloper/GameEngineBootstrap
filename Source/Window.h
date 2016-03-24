@@ -12,7 +12,7 @@ namespace WindowBootstrap {
 	class Window
 	{
 	public:
-		bool IsRenderingLoopRunning = true;
+		bool IsMainLoopRunning = true;
 
 		Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 		~Window();

@@ -75,12 +75,17 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 	// Windows Message loop
 	MSG Message = { 0 };
 	
-	while (IsRenderingLoopRunning)
+	while (IsMainLoopRunning)
 	{
 		while (PeekMessage(&Message, 0, 0, 0, PM_REMOVE))
 		{
-			if (Message.message == WM_QUIT)
+			switch (Message.message)
 			{
+			case WM_QUIT:
+				IsMainLoopRunning = false;
+				break;
+			case WM_MOUSEMOVE:
+				POINTS points = MAKEPOINTS(Message.lParam);
 				break;
 			}
 
@@ -99,13 +104,11 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 
 			Renderer->Update(deltaTime);
 			Renderer->Render(deltaTime);
-
-			SwapBuffers(WindowDeviceContext);
 		}
 		catch (std::exception* e)
 		{
 			OutputDebugStringA(e->what());
-			IsRenderingLoopRunning = false;
+			IsMainLoopRunning = false;
 			break;
 		}
 	}
@@ -127,7 +130,7 @@ LRESULT CALLBACK Window::MessageLoopCallback(HWND WindowHandle, UINT Message, WP
 		WindowDeviceContext = ::GetDC(WindowHandle);
 		break;
 	case WM_DESTROY:
-		IsRenderingLoopRunning = false;
+		IsMainLoopRunning = false;
 		::PostQuitMessage(0);
 		break;
 

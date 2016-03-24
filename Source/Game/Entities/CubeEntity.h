@@ -18,6 +18,7 @@ namespace Game
 			CubeEntity(std::string name) : Core::GameEntity::GameEntity(name) {};
 			~CubeEntity();
 
+			bool IsStatic() const override { return true; };
 			void OnLoad();
 			void OnUpdate(const double deltaTime);
 

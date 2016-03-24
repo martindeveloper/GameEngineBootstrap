@@ -54,8 +54,15 @@ namespace Renderer
 		Renderer::OpenGL4FrameBuffer* FrameBuffer;
 		Graphic::Buffer::ConstantBuffer UniformBuffer;
 
+		// Static geometry
+		OpenGL4Buffer StaticGeometryBuffer;
+		OpenGL4Buffer StaticGeometryVertexArrayObject;
+
 		// Materials
 		std::vector<Renderer::OpenGL4Material*> Materials;
+
+		void LoadStaticEntities();
+		void LoadDynamicEntities();
 
 		void PrepareBuffers() override;
 
