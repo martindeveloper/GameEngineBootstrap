@@ -9,9 +9,10 @@ VulkanRenderer::VulkanRenderer()
 VulkanRenderer::~VulkanRenderer()
 {
 	vkDestroyInstance(Instance, nullptr);
-	
+	delete[] PhysicalDevices;
+	delete PrimaryDevice;
+	delete Swapchain;
 }
-
 
 void VulkanRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 {
@@ -31,31 +32,43 @@ void VulkanRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	InstanceInfo.enabledExtensionCount = 0;
 	InstanceInfo.ppEnabledExtensionNames = nullptr;
 
+	std::vector<const char*> enabledExtensions;
+	enabledExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+
+#ifdef _WIN32
+	enabledExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+#endif
+
+	InstanceInfo.enabledExtensionCount = enabledExtensions.size();
+	InstanceInfo.ppEnabledExtensionNames = &enabledExtensions[0];
+
 	VkResult instanceResult = vkCreateInstance(&InstanceInfo, nullptr, &Instance);
 
 	assert(instanceResult == VK_SUCCESS);
 
-	FindPrimaryDevice();
+	FindAndSetPrimaryPhysicalDevice();
 
-	assert(PrimaryDevice != nullptr);
+	assert(PrimaryPhysicalDevice != nullptr);
 
 #if IS_DEBUG
-	OutputDeviceProperties(PrimaryDevice);
+	OutputDeviceProperties(PrimaryPhysicalDevice);
 #endif
+
+	CreateDevice();
 }
 
-void VulkanRenderer::FindPrimaryDevice()
+void VulkanRenderer::FindAndSetPrimaryPhysicalDevice()
 {
 	VkResult devicesResult = vkEnumeratePhysicalDevices(Instance, &DevicesCount, nullptr);
 	
 	assert(devicesResult == VK_SUCCESS);
 	assert(DevicesCount > 0);
 
-	Devices = new VkPhysicalDevice[DevicesCount];
-	devicesResult = vkEnumeratePhysicalDevices(Instance, &DevicesCount, Devices);
+	PhysicalDevices = new VkPhysicalDevice[DevicesCount];
+	devicesResult = vkEnumeratePhysicalDevices(Instance, &DevicesCount, PhysicalDevices);
 
 	// Set first device as primary
-	PrimaryDevice = &Devices[0];
+	PrimaryPhysicalDevice = &PhysicalDevices[0];
 }
 
 void VulkanRenderer::OutputDeviceProperties(VkPhysicalDevice* device)
@@ -63,15 +76,56 @@ void VulkanRenderer::OutputDeviceProperties(VkPhysicalDevice* device)
 	VkPhysicalDeviceProperties properties;
 	ZeroMemory(&properties, sizeof(VkPhysicalDeviceProperties));
 
-	vkGetPhysicalDeviceProperties(*PrimaryDevice, &properties);
+	vkGetPhysicalDeviceProperties(*PrimaryPhysicalDevice, &properties);
 
 	Log::Write("VulkanRenderer", "Driver Version: %d", Log::Severity::Notice, properties.driverVersion);
 	Log::Write("VulkanRenderer", "Device Name: %s", Log::Severity::Notice, properties.deviceName);
 	Log::Write("VulkanRenderer", "Device Type: %d", Log::Severity::Notice, properties.deviceType);
 	Log::Write("VulkanRenderer", "API Version: %d.%d.%d", Log::Severity::Notice,
-		(properties.apiVersion >> 22) & 0x3FF,
-		(properties.apiVersion >> 12) & 0x3FF,
-		(properties.apiVersion & 0xFFF));
+		VK_VER_MAJOR(properties.apiVersion),
+		VK_VER_MINOR(properties.apiVersion),
+		VK_VER_PATCH(properties.apiVersion));
+}
+
+void Renderer::VulkanRenderer::CreateDevice()
+{
+	VkDeviceCreateInfo info;
+
+	info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	info.pNext = nullptr;
+	info.flags = NULL;
+	info.enabledLayerCount = 0;
+	info.ppEnabledLayerNames = nullptr;
+	info.enabledExtensionCount = 0;
+	info.ppEnabledExtensionNames = nullptr;
+	info.pEnabledFeatures = nullptr;
+
+	VkDeviceQueueCreateInfo queueInfo;
+	queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queueInfo.pNext = nullptr;
+	queueInfo.flags = NULL;
+	queueInfo.queueFamilyIndex = 0;
+
+	float queuePriorities[] = { 1.0f };
+	queueInfo.queueCount = 1;
+	queueInfo.pQueuePriorities = queuePriorities;
+
+	info.queueCreateInfoCount = 1;
+	info.pQueueCreateInfos = &queueInfo;
+
+	PrimaryDevice = new VkDevice();
+	VkResult result = vkCreateDevice(*PrimaryPhysicalDevice, &info, nullptr, PrimaryDevice);
+
+	assert(result == VK_SUCCESS);
+}
+
+void VulkanRenderer::CreateSwapchain(HDC hdc)
+{
+	assert(Swapchain == nullptr);
+
+	Swapchain = new VulkanSwapchain(this, hdc);
+
+	Swapchain->Initialize();
 }
 
 void VulkanRenderer::ClearWindow(const double deltaTime)

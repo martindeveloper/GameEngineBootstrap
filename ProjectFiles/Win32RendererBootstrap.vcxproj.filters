@@ -135,6 +135,9 @@
     <ClCompile Include="..\Source\Core\Log.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Renderer\Vulkan\VulkanSwapchain.cpp">
+      <Filter>Source Files\Renderer\Vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\Window.h">
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="..\Source\Core\Log.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\Vulkan\VulkanSwapchain.h">
+      <Filter>Header Files\Renderer\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

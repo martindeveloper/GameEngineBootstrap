@@ -136,6 +136,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp" />
     <ClCompile Include="..\Source\Renderer\Vulkan\VulkanRenderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\Vulkan\VulkanSwapchain.cpp" />
     <ClCompile Include="..\source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Material.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h" />
     <ClInclude Include="..\Source\Renderer\Vulkan\VulkanRenderer.h" />
+    <ClInclude Include="..\Source\Renderer\Vulkan\VulkanSwapchain.h" />
     <ClInclude Include="..\Source\Types.h" />
     <ClInclude Include="..\source\Window.h" />
   </ItemGroup>
