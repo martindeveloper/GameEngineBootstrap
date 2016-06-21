@@ -125,6 +125,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Core\Log.cpp" />
     <ClCompile Include="..\Source\Game\Entities\CubeEntity.cpp" />
     <ClCompile Include="..\Source\Graphic\Model\ObjModel.cpp" />
     <ClCompile Include="..\Source\Image\ImageBMP.cpp" />
@@ -134,11 +135,13 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClCompile Include="..\Source\Renderer\D3D11\D3D11Renderer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.cpp" />
     <ClCompile Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.cpp" />
+    <ClCompile Include="..\Source\Renderer\Vulkan\VulkanRenderer.cpp" />
     <ClCompile Include="..\source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\GameEntity.h" />
     <ClInclude Include="..\Source\Core\IResource.h" />
+    <ClInclude Include="..\Source\Core\Log.h" />
     <ClInclude Include="..\source\filesystem\File.h" />
     <ClInclude Include="..\Source\Game\Entities\CubeEntity.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h" />
@@ -169,6 +172,7 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4FrameBuffer.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Material.h" />
     <ClInclude Include="..\Source\Renderer\OpenGL4\OpenGL4Renderer.h" />
+    <ClInclude Include="..\Source\Renderer\Vulkan\VulkanRenderer.h" />
     <ClInclude Include="..\Source\Types.h" />
     <ClInclude Include="..\source\Window.h" />
   </ItemGroup>

@@ -6,6 +6,8 @@
 #define VERTEX_HAVE_UV 1
 #undef VERTEX_HAVE_NORMAL
 
+#define IS_DEBUG 1
+
 #if 0
 #define VLD_FORCE_ENABLE 1
 #include <vld.h>
@@ -32,6 +34,8 @@
 
 #include "Types.h"
 #include "Core/IResource.h"
+
+#include "Core/Log.h"
 
 #include "Renderer/Material.h"
 #include "Renderer/IWindowRenderer.h"

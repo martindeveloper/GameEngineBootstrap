@@ -88,6 +88,15 @@
     <Filter Include="Source Files\Renderer\OpenGL4">
       <UniqueIdentifier>{c9f048b1-02c8-4309-b1ea-49ff3d776d82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Renderer\Vulkan">
+      <UniqueIdentifier>{44f603df-b1a4-4771-b347-0d1641183443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Renderer\Vulkan">
+      <UniqueIdentifier>{dd66fa11-c1fa-4043-af29-b2e08a012554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{f5b6ba42-82d1-4456-a12f-0d10d3e06bbc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\main.cpp">
@@ -119,6 +128,12 @@
     </ClCompile>
     <ClCompile Include="..\Source\Renderer\D3D11\D3D11FrameBuffer.cpp">
       <Filter>Source Files\Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Renderer\Vulkan\VulkanRenderer.cpp">
+      <Filter>Source Files\Renderer\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\Log.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="..\Source\Graphic\Buffer\TransformBuffer.h">
       <Filter>Header Files\Graphic\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Renderer\Vulkan\VulkanRenderer.h">
+      <Filter>Header Files\Renderer\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Core\Log.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
