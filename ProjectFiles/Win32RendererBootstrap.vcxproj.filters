@@ -97,6 +97,12 @@
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{f5b6ba42-82d1-4456-a12f-0d10d3e06bbc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Components">
+      <UniqueIdentifier>{f3cde2ae-9701-4cfc-9813-a4a52d90a9c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Components">
+      <UniqueIdentifier>{39f494a7-3a98-4a8b-ac79-7aeaf96bcf95}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\main.cpp">
@@ -137,6 +143,15 @@
     </ClCompile>
     <ClCompile Include="..\Source\Renderer\Vulkan\VulkanSwapchain.cpp">
       <Filter>Source Files\Renderer\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\Components\RendererComponent.cpp">
+      <Filter>Source Files\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Game\Components\MeshComponent.cpp">
+      <Filter>Source Files\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Core\GameEntity.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +265,15 @@
     </ClInclude>
     <ClInclude Include="..\Source\Renderer\Vulkan\VulkanSwapchain.h">
       <Filter>Header Files\Renderer\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\Components\IComponent.h">
+      <Filter>Header Files\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\Components\RendererComponent.h">
+      <Filter>Header Files\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Game\Components\MeshComponent.h">
+      <Filter>Header Files\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,8 @@
 #include "../../Core/GameEntity.h"
 #include "../../Game/Entities/CubeEntity.h"
 
+#include "../../Game/Components/RendererComponent.h"
+
 // Libraries
 #pragma comment(lib, "glu32")
 #if _WIN64

@@ -1,4 +1,6 @@
 #pragma once
+#define VULKAN_SDK_VERSION "1.0.24.0"
+
 #include "../../Common.h"
 
 #include "../../Image/Image.h"
@@ -22,9 +24,9 @@
 // Libraries
 #pragma comment (lib, "vulkan-1.lib")
 
-#define VK_VER_MAJOR(X) ((((uint32_t)(X))>>22)&0x3FF)
-#define VK_VER_MINOR(X) ((((uint32_t)(X))>>12)&0x3FF)
-#define VK_VER_PATCH(X) (((uint32_t)(X)) & 0xFFF)
+#define VK_VER_MAJOR(X) ((((uint32)(X))>>22)&0x3FF)
+#define VK_VER_MINOR(X) ((((uint32)(X))>>12)&0x3FF)
+#define VK_VER_PATCH(X) (((uint32)(X)) & 0xFFF)
 
 namespace Renderer
 {
@@ -37,10 +39,10 @@ namespace Renderer
 		VkInstance Instance;
 		VkInstanceCreateInfo InstanceInfo;
 
-		uint32_t DevicesCount = 0;
+		uint32 DevicesCount = 0;
 		VkPhysicalDevice* PhysicalDevices;
 		VkPhysicalDevice* PrimaryPhysicalDevice;
-		VkDevice* PrimaryDevice;
+		VkDevice PrimaryDevice;
 
 		VulkanSwapchain* Swapchain;
 

@@ -2,12 +2,16 @@
 
 #include "../Common.h"
 #include "../Graphic/Vertex.h"
+#include "../Game/Components/IComponent.h"
+#include "../Game/Components/RendererComponent.h"
 
 namespace Renderer
 {
 	class IWindowRenderer;
 	class Material;
 }
+
+typedef std::map<const char*, Components::IComponent*> ComponentsMap;
 
 namespace Core
 {
@@ -17,24 +21,25 @@ namespace Core
 		const std::string Name;
 
 		GameEntity(std::string name) : Name(name) {};
-		virtual ~GameEntity() {};
+
+		virtual ~GameEntity();
 
 		virtual bool IsStatic() const { return true; };
 		virtual void OnLoad() {};
 		virtual void OnUpdate(const double deltaTime) {};
 
-		virtual std::vector<Graphic::Vertex>* GetVerticies() const { return nullptr; };
-		virtual Renderer::Material* GetMaterial() const { return nullptr; };
+		void SetRenderer(Renderer::IWindowRenderer* renderer);
 
-		virtual uint32 GetVertexBufferWidth() const { return 0; }
-		virtual uint32 GetVertexBufferStride() const { return 0; };
+		void AttachComponent(Components::IComponent* component);
+		void DetachComponent();
+		bool IsComponentAttached(const char* name);
+		Components::IComponent* GetComponent(const char* name);
+		void DestroyAllComponents();
 
-		void SetRenderer(Renderer::IWindowRenderer* renderer)
-		{
-			Renderer = renderer;
-		};
+		Components::RendererComponent* GetRendererComponent();
 
 	protected:
 		Renderer::IWindowRenderer* Renderer;
+		ComponentsMap Components;
 	};
 }

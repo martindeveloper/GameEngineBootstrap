@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F0B90893-B36A-42B4-8A73-12628E937C5F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -125,7 +125,10 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Source\Core\GameEntity.cpp" />
     <ClCompile Include="..\Source\Core\Log.cpp" />
+    <ClCompile Include="..\Source\Game\Components\MeshComponent.cpp" />
+    <ClCompile Include="..\Source\Game\Components\RendererComponent.cpp" />
     <ClCompile Include="..\Source\Game\Entities\CubeEntity.cpp" />
     <ClCompile Include="..\Source\Graphic\Model\ObjModel.cpp" />
     <ClCompile Include="..\Source\Image\ImageBMP.cpp" />
@@ -144,6 +147,9 @@ xcopy "$(SolutionDir)..\External\glew\dll\*.dll" "$(TargetDir)" /Y</Command>
     <ClInclude Include="..\Source\Core\IResource.h" />
     <ClInclude Include="..\Source\Core\Log.h" />
     <ClInclude Include="..\source\filesystem\File.h" />
+    <ClInclude Include="..\Source\Game\Components\IComponent.h" />
+    <ClInclude Include="..\Source\Game\Components\MeshComponent.h" />
+    <ClInclude Include="..\Source\Game\Components\RendererComponent.h" />
     <ClInclude Include="..\Source\Game\Entities\CubeEntity.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\ConstantBuffer.h" />
     <ClInclude Include="..\Source\Graphic\Buffer\TransformBuffer.h" />

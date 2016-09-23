@@ -33,7 +33,7 @@ void VulkanSwapchain::Initialize()
 
 	assert(result == VK_SUCCESS);
 
-	uint32_t formatCount = 0;
+	uint32 formatCount = 0;
 
 	result = vkGetPhysicalDeviceSurfaceFormatsKHR(*(Renderer->PrimaryPhysicalDevice), Surface, &formatCount, nullptr);
 

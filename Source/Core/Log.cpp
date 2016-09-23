@@ -5,8 +5,8 @@
 void Log::Write(const char* module, const char* format, Severity severity, ...)
 {
 #if IS_DEBUG
-	constexpr uint32_t bufferSize = 512;
-	constexpr uint32_t bufferSizeMinusOne = bufferSize - 1;
+	constexpr uint32 bufferSize = 512;
+	constexpr uint32 bufferSizeMinusOne = bufferSize - 1;
 
 	va_list args;
 	va_start(args, severity);

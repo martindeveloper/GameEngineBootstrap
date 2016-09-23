@@ -2,7 +2,11 @@
 
 #include "../Common.h"
 #include "../Image/Image.h"
-#include "../Core/GameEntity.h"
+
+namespace Core
+{
+	class GameEntity;
+}
 
 namespace Renderer {
 	struct RendererParameters

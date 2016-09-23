@@ -4,13 +4,17 @@ using namespace Renderer;
 
 VulkanRenderer::VulkanRenderer()
 {
+	Swapchain = nullptr;
 }
 
 VulkanRenderer::~VulkanRenderer()
 {
+	vkDeviceWaitIdle(PrimaryDevice);
+	vkDestroyDevice(PrimaryDevice, nullptr);
+
 	vkDestroyInstance(Instance, nullptr);
+
 	delete[] PhysicalDevices;
-	delete PrimaryDevice;
 	delete Swapchain;
 }
 
@@ -55,6 +59,7 @@ void VulkanRenderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 #endif
 
 	CreateDevice();
+	CreateSwapchain(WindowDeviceContext);
 }
 
 void VulkanRenderer::FindAndSetPrimaryPhysicalDevice()
@@ -113,8 +118,7 @@ void Renderer::VulkanRenderer::CreateDevice()
 	info.queueCreateInfoCount = 1;
 	info.pQueueCreateInfos = &queueInfo;
 
-	PrimaryDevice = new VkDevice();
-	VkResult result = vkCreateDevice(*PrimaryPhysicalDevice, &info, nullptr, PrimaryDevice);
+	VkResult result = vkCreateDevice(*PrimaryPhysicalDevice, &info, nullptr, &PrimaryDevice);
 
 	assert(result == VK_SUCCESS);
 }
