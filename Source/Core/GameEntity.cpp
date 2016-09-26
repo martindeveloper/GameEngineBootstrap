@@ -10,10 +10,9 @@ void Core::GameEntity::SetRenderer(Renderer::IWindowRenderer * renderer)
 	Renderer = renderer;
 }
 
-void Core::GameEntity::AttachComponent(Components::IComponent* component)
+void Core::GameEntity::AttachComponentInternal(Components::IComponent* component, const char* name)
 {
 	component->Owner = this;
-	const char* name = component->GetName();
 
 	bool isExist = IsComponentAttached(name);
 
@@ -37,7 +36,7 @@ bool Core::GameEntity::IsComponentAttached(const char * name)
 	return (Components.count(name) != 0);
 }
 
-Components::IComponent* Core::GameEntity::GetComponent(const char* name)
+Components::IComponent* Core::GameEntity::GetComponentInternal(const char* name)
 {
 	assert(IsComponentAttached(name) == true);
 
@@ -56,8 +55,7 @@ void Core::GameEntity::DestroyAllComponents()
 
 Components::RendererComponent* Core::GameEntity::GetRendererComponent()
 {
-	Components::IComponent* component = GetComponent(Components::RendererComponent::Name);
-	Components::RendererComponent* rendererComponent = static_cast<Components::RendererComponent*>(component);
+	Components::RendererComponent* rendererComponent = GetComponent<Components::RendererComponent>();
 
 	return rendererComponent;
 }

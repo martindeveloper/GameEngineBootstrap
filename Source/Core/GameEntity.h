@@ -30,10 +30,33 @@ namespace Core
 
 		void SetRenderer(Renderer::IWindowRenderer* renderer);
 
-		void AttachComponent(Components::IComponent* component);
 		void DetachComponent();
 		bool IsComponentAttached(const char* name);
-		Components::IComponent* GetComponent(const char* name);
+
+		template<typename T>
+		T* AttachComponent()
+		{
+			T* component = new T();
+			const char* name = typeid(T).name();
+
+			AttachComponentInternal(component, name);
+
+			return component;
+		}
+
+		template<typename T>
+		T* GetComponent()
+		{
+			const char* name = typeid(T).name();
+
+			Components::IComponent* component = GetComponentInternal(name);
+			T* typedComponent = static_cast<T*>(component);
+
+			assert(typedComponent != nullptr);
+
+			return typedComponent;
+		}
+
 		void DestroyAllComponents();
 
 		Components::RendererComponent* GetRendererComponent();
@@ -41,5 +64,9 @@ namespace Core
 	protected:
 		Renderer::IWindowRenderer* Renderer;
 		ComponentsMap Components;
+
+	private:
+		void AttachComponentInternal(Components::IComponent* component, const char* name);
+		Components::IComponent* GetComponentInternal(const char* name);
 	};
 }

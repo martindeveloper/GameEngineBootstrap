@@ -17,22 +17,23 @@ void CubeEntity::OnLoad()
 	primaryMaterial->Transform = { StartingPosition,{ 0.5f, 0.5f, 0.5f } };
 
 	// Renderer Component
-	Components::RendererComponent* rendererComponent = new Components::RendererComponent();
-
-	AttachComponent(rendererComponent);
-
+	Components::RendererComponent* rendererComponent = AttachComponent<Components::RendererComponent>();
 	rendererComponent->SetPrimaryMaterial(primaryMaterial);
 
 	// Mesh Component
-	Components::MeshComponent* meshComponent = new Components::MeshComponent(Renderer);
+	Components::MeshComponent* meshComponent = AttachComponent<Components::MeshComponent>();
 
-	AttachComponent(meshComponent);
+	// NOTE(martin.pernica): Renderer is needed because mesh component will upload textures and others. Maybe inverse the dependency and let render itself upload texture afterwards
+	meshComponent->Initialize(Renderer);
 
-	meshComponent->LoadMesh("CubeModel.obj");
+	bool isMeshLoaded = meshComponent->LoadMesh("CubeModel.obj");
+
+	assert(isMeshLoaded == true);
+
 	meshComponent->LoadTexture("lenaColor512A.bmp");
 }
 
 void CubeEntity::OnUpdate(double deltaTime)
 {
-	//CurrentMaterial->Transform.Position.X += sin(deltaTime) / 1000;
+	GetRendererComponent()->GetPrimaryMaterial()->Transform.Position.X += sin(deltaTime) / 1000;
 }

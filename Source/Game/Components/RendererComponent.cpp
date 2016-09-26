@@ -16,7 +16,7 @@ Components::RendererComponent::~RendererComponent()
 std::vector<Graphic::Vertex>* Components::RendererComponent::GetVerticies() const
 {
 	// TODO(martin.pernica): Bad solution, refactor getting mesh comp
-	Components::MeshComponent* mesh = static_cast<Components::MeshComponent*>(Owner->GetComponent(Components::MeshComponent::Name));
+	Components::MeshComponent* mesh = Owner->GetComponent<Components::MeshComponent>();
 
 	assert(mesh != nullptr);
 
@@ -42,7 +42,7 @@ void Components::RendererComponent::SetPrimaryMaterial(Renderer::Material* mater
 
 uint32 Components::RendererComponent::GetVertexBufferWidth() const
 {
-	Components::MeshComponent* mesh = static_cast<Components::MeshComponent*>(Owner->GetComponent(Components::MeshComponent::Name));
+	Components::MeshComponent* mesh = Owner->GetComponent<Components::MeshComponent>();
 
 	assert(mesh != nullptr);
 

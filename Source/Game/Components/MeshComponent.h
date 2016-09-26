@@ -21,8 +21,10 @@ namespace Components
 		static const char* Name;
 		const char* GetName() const override { return Name; };
 
-		MeshComponent(Renderer::IWindowRenderer* renderer);
+		MeshComponent();
 		virtual ~MeshComponent();
+
+		void Initialize(Renderer::IWindowRenderer* renderer);
 
 		bool LoadMesh(const char* AssetName);
 		bool LoadTexture(const char* AssetName);

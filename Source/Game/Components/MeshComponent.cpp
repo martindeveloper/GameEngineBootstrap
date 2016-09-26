@@ -2,15 +2,19 @@
 
 const char* Components::MeshComponent::Name = "MeshComponent";
 
-Components::MeshComponent::MeshComponent(Renderer::IWindowRenderer* renderer)
+Components::MeshComponent::MeshComponent()
 {
-	Renderer = renderer;
 }
 
 Components::MeshComponent::~MeshComponent()
 {
 	delete Mesh;
 	delete Texture;
+}
+
+void Components::MeshComponent::Initialize(Renderer::IWindowRenderer * renderer)
+{
+	Renderer = renderer;
 }
 
 bool Components::MeshComponent::LoadMesh(const char * AssetName)
