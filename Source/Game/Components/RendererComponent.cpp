@@ -25,11 +25,17 @@ std::vector<Graphic::Vertex>* Components::RendererComponent::GetVerticies() cons
 
 Renderer::Material* Components::RendererComponent::GetPrimaryMaterial() const
 {
-	return Materials.at(0);
+	Renderer::Material* material = Materials.at(0);
+
+	assert(material != nullptr);
+
+	return material;
 }
 
 void Components::RendererComponent::SetPrimaryMaterial(Renderer::Material* material)
 {
+	assert(Materials.size() > 0);
+
 	// TODO(martin.pernica): Check if zero index is not already used
 	Materials[0] = material;
 }
