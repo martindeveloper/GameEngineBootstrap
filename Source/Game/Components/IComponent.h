@@ -14,7 +14,5 @@ namespace Components
 		virtual ~IComponent() {};
 
 		Core::GameEntity* Owner = nullptr;
-
-		virtual const char* GetName() const { return ""; };
 	};
 }

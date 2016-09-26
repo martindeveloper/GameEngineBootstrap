@@ -31,7 +31,14 @@ namespace Core
 		void SetRenderer(Renderer::IWindowRenderer* renderer);
 
 		void DetachComponent();
-		bool IsComponentAttached(const char* name);
+
+		template<typename T>
+		bool IsComponentAttached()
+		{
+			const char* name = typeid(T).name();
+
+			return IsComponentAttachedInternal(name);
+		}
 
 		template<typename T>
 		T* AttachComponent()
@@ -59,8 +66,6 @@ namespace Core
 
 		void DestroyAllComponents();
 
-		Components::RendererComponent* GetRendererComponent();
-
 	protected:
 		Renderer::IWindowRenderer* Renderer;
 		ComponentsMap Components;
@@ -68,5 +73,6 @@ namespace Core
 	private:
 		void AttachComponentInternal(Components::IComponent* component, const char* name);
 		Components::IComponent* GetComponentInternal(const char* name);
+		bool IsComponentAttachedInternal(const char* name);
 	};
 }

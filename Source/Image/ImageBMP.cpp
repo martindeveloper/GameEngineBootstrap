@@ -60,4 +60,7 @@ void ImageBMP::Free()
 ImageBMP::~ImageBMP()
 {
 	Free();
+
+	// NOTE(martin.pernica): Maybe delete source file after uploading to GPU as texture
+	delete SourceFile;
 };

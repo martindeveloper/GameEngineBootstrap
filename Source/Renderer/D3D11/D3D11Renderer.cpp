@@ -102,9 +102,10 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 			entity->SetRenderer(this);
 			entity->OnLoad();
 
-			Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+			Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+			Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
 
-			std::vector<Graphic::Vertex>* verticies = rendererComponent->GetVerticies();
+			std::vector<Graphic::Vertex>* verticies = meshComponent->GetVerticies();
 
 			CreateVertexBufferForEntity(entity);
 
@@ -113,7 +114,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 			D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 
 			result = DeviceContext->Map(material->VertexBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mappedSubResource);
-			memcpy(mappedSubResource.pData, &verticies->at(0), rendererComponent->GetVertexBufferWidth());
+			memcpy(mappedSubResource.pData, &verticies->at(0), meshComponent->GetVertexBufferWidth());
 			DeviceContext->Unmap(material->VertexBuffer, NULL);
 
 			assert(!(FAILED(result)));
@@ -253,7 +254,8 @@ void D3D11Renderer::Update(const double deltaTime)
 
 	for (auto entity : GameEntitites)
 	{
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+		Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+
 		Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(rendererComponent->GetPrimaryMaterial());
 
 		entity->OnUpdate(deltaTime);
@@ -285,7 +287,9 @@ void D3D11Renderer::Render(const double deltaTime)
 
 	for (auto entity : GameEntitites)
 	{
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+		Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+		Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+
 		material = static_cast<Renderer::D3D11Material*>(rendererComponent->GetPrimaryMaterial());
 
 		// Map Transform buffer from GPU to CPU
@@ -303,7 +307,7 @@ void D3D11Renderer::Render(const double deltaTime)
 		DeviceContext->PSSetShader(material->PixelShader, nullptr, 0);
 
 		// Set vertex buffers
-		stride = rendererComponent->GetVertexBufferStride();
+		stride = meshComponent->GetVertexBufferStride();
 
 		DeviceContext->IASetVertexBuffers(0, 1, &material->VertexBuffer, &stride, &offset);
 		DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -313,7 +317,7 @@ void D3D11Renderer::Render(const double deltaTime)
 		DeviceContext->PSSetShaderResources(0, 1, &material->DiffuseTexture);
 
 		// Draw
-		DeviceContext->Draw(rendererComponent->GetVerticies()->size(), 0);
+		DeviceContext->Draw(meshComponent->GetVerticies()->size(), 0);
 	}
 
 	FrameBuffer->Unbind();
@@ -328,7 +332,9 @@ void D3D11Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 {
 	HRESULT result;
 
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+
 	Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(rendererComponent->GetPrimaryMaterial());
 
 	image->Load();
@@ -423,7 +429,8 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 {
 	HRESULT result = S_OK;
 
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+
 	Renderer::Material* material = rendererComponent->GetPrimaryMaterial();
 
 	std::string vertexShaderName = material->VertexShader + ".cso";
@@ -470,14 +477,16 @@ void D3D11Renderer::CreateVertexBufferForEntity(Core::GameEntity* entity)
 {
 	HRESULT result = S_OK;
 
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+
 	Renderer::D3D11Material* material = static_cast<Renderer::D3D11Material*>(rendererComponent->GetPrimaryMaterial());
 
 	D3D11_BUFFER_DESC bufferDescription;
 	ZeroMemory(&bufferDescription, sizeof(bufferDescription));
 
 	bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDescription.ByteWidth = rendererComponent->GetVertexBufferWidth();
+	bufferDescription.ByteWidth = meshComponent->GetVertexBufferWidth();
 	bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 

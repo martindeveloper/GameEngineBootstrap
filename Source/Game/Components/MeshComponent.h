@@ -15,25 +15,31 @@ namespace Renderer
 
 namespace Components
 {
+	enum TextureSlot
+	{
+		TEXTURE_DIFFUSE_SLOT
+	};
+
 	class MeshComponent : public IComponent
 	{
 	public:
-		static const char* Name;
-		const char* GetName() const override { return Name; };
-
 		MeshComponent();
 		virtual ~MeshComponent();
 
 		void Initialize(Renderer::IWindowRenderer* renderer);
 
-		bool LoadMesh(const char* AssetName);
-		bool LoadTexture(const char* AssetName);
+		bool SetMesh(const char* AssetName);
+
+		bool SetTexture(const char* AssetName, TextureSlot slot);
+		Image::Image* GetTexture(TextureSlot slot);
 
 		std::vector<Graphic::Vertex>* GetVerticies() const;
+		uint32 GetVertexBufferWidth() const;
+		uint32 GetVertexBufferStride() const;
 
 	private:
 		Renderer::IWindowRenderer* Renderer;
-		Image::Image* Texture;
+		Image::Image* DiffuseTexture;
 		Graphic::Model::ObjModel* Mesh;
 	};
 }

@@ -26,14 +26,14 @@ void CubeEntity::OnLoad()
 	// NOTE(martin.pernica): Renderer is needed because mesh component will upload textures and others. Maybe inverse the dependency and let render itself upload texture afterwards
 	meshComponent->Initialize(Renderer);
 
-	bool isMeshLoaded = meshComponent->LoadMesh("CubeModel.obj");
+	bool isMeshLoaded = meshComponent->SetMesh("CubeModel.obj");
 
 	assert(isMeshLoaded == true);
 
-	meshComponent->LoadTexture("lenaColor512A.bmp");
+	meshComponent->SetTexture("lenaColor512A.bmp", Components::TextureSlot::TEXTURE_DIFFUSE_SLOT);
 }
 
 void CubeEntity::OnUpdate(double deltaTime)
 {
-	GetRendererComponent()->GetPrimaryMaterial()->Transform.Position.X += sin(deltaTime) / 1000;
+	GetComponent<Components::RendererComponent>()->GetPrimaryMaterial()->Transform.Position.X += sin(deltaTime) / 1000;
 }
