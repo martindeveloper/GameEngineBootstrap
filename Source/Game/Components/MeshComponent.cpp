@@ -10,11 +10,6 @@ Components::MeshComponent::~MeshComponent()
 	delete DiffuseTexture;
 }
 
-void Components::MeshComponent::Initialize(Renderer::IWindowRenderer * renderer)
-{
-	Renderer = renderer;
-}
-
 bool Components::MeshComponent::SetMesh(const char* AssetName)
 {
 	FileSystem::File cubeObjSource(AssetName);

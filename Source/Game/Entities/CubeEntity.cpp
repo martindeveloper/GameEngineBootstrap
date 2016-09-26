@@ -23,9 +23,6 @@ void CubeEntity::OnLoad()
 	// Mesh Component
 	Components::MeshComponent* meshComponent = AttachComponent<Components::MeshComponent>();
 
-	// NOTE(martin.pernica): Renderer is needed because mesh component will upload textures and others. Maybe inverse the dependency and let render itself upload texture afterwards
-	meshComponent->Initialize(Renderer);
-
 	bool isMeshLoaded = meshComponent->SetMesh("CubeModel.obj");
 
 	assert(isMeshLoaded == true);

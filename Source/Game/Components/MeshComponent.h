@@ -26,8 +26,6 @@ namespace Components
 		MeshComponent();
 		virtual ~MeshComponent();
 
-		void Initialize(Renderer::IWindowRenderer* renderer);
-
 		bool SetMesh(const char* AssetName);
 
 		bool SetTexture(const char* AssetName, TextureSlot slot);
