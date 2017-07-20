@@ -1,4 +1,7 @@
+#if RENDERER_DIRECTX11
+
 #pragma once
+
 #include "../../Common.h"
 
 #include <dxgi.h>
@@ -72,3 +75,5 @@ namespace Renderer
 		void CreateDepthBuffer();
 	};
 }
+
+#endif

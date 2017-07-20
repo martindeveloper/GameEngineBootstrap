@@ -1,3 +1,5 @@
+#if RENDERER_DIRECTX11
+
 #include "D3D11Renderer.h"
 
 using namespace Renderer;
@@ -523,3 +525,5 @@ void D3D11Renderer::CreateConstantBuffer(ID3D11Buffer** targetBuffer)
 
 	assert(!(FAILED(result)));
 }
+
+#endif

@@ -1,7 +1,8 @@
 #pragma once
 
-#ifndef __GlobalHeaders
-#define __GlobalHeaders
+#ifndef RENDERER
+#define RENDERER RENDERER_OPENGL4
+#endif
 
 #define VERTEX_HAVE_UV 1
 #undef VERTEX_HAVE_NORMAL
@@ -41,4 +42,5 @@
 #include "Renderer/IWindowRenderer.h"
 #include "Window.h"
 
-#endif
+#undef TEXT
+#define TEXT(string) L#string

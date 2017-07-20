@@ -1,3 +1,5 @@
+#if RENDERER_OPENGL4
+
 #pragma once
 
 #include "../../Common.h"
@@ -22,3 +24,5 @@ namespace Renderer
 		OpenGL4ShaderProgram ShaderProgramId = 0;
 	};
 }
+
+#endif

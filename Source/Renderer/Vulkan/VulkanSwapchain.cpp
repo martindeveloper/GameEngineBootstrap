@@ -1,3 +1,5 @@
+#if RENDERER_VULKAN
+
 #include "VulkanSwapchain.h"
 
 using namespace Renderer;
@@ -56,3 +58,5 @@ void VulkanSwapchain::Initialize()
 
 	ColorSpace = surfaceFormats[0].colorSpace;
 }
+
+#endif

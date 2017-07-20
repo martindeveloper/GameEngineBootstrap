@@ -1,4 +1,6 @@
-﻿#include "OpenGL4Renderer.h"
+﻿#if RENDERER_OPENGL4
+
+#include "OpenGL4Renderer.h"
 
 using namespace Renderer;
 
@@ -116,8 +118,10 @@ void OpenGL4Renderer::LoadStaticEntities()
 		entity->SetRenderer(this);
 		entity->OnLoad();
 
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
-		staticGeometrySize += rendererComponent->GetVertexBufferWidth();
+		Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+		Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+
+		staticGeometrySize += meshComponent->GetVertexBufferWidth();
 
 		CreateShaderForEntity(entity);
 	}
@@ -134,10 +138,10 @@ void OpenGL4Renderer::LoadStaticEntities()
 	{
 		if (entity->IsStatic() == false) { continue; }
 
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+		Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
 
-		std::vector<Graphic::Vertex>* verticies = rendererComponent->GetVerticies();
-		uint32 width = rendererComponent->GetVertexBufferWidth();
+		std::vector<Graphic::Vertex>* verticies = meshComponent->GetVerticies();
+		uint32 width = meshComponent->GetVertexBufferWidth();
 
 		glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, width, &verticies->at(0));
 
@@ -160,9 +164,10 @@ void OpenGL4Renderer::LoadDynamicEntities()
 		entity->SetRenderer(this);
 		entity->OnLoad();
 
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+		Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+		Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
 		
-		std::vector<Graphic::Vertex>* verticies = rendererComponent->GetVerticies();
+		std::vector<Graphic::Vertex>* verticies = meshComponent->GetVerticies();
 
 		CreateBuffersForEntity(entity);
 
@@ -171,7 +176,7 @@ void OpenGL4Renderer::LoadDynamicEntities()
 		glBindVertexArray(material->DynamicVertexArrayObject);
 		glBindBuffer(GL_ARRAY_BUFFER, material->DynamicVertexBuffer);
 
-		glBufferData(GL_ARRAY_BUFFER, rendererComponent->GetVertexBufferWidth(), &verticies->at(0), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, meshComponent->GetVertexBufferWidth(), &verticies->at(0), GL_DYNAMIC_DRAW);
 
 		CreateShaderForEntity(entity);
 	}
@@ -185,7 +190,7 @@ void OpenGL4Renderer::LoadDynamicEntities()
 
 void OpenGL4Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* image)
 {
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
 
 	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(rendererComponent->GetPrimaryMaterial());
 
@@ -267,7 +272,9 @@ void OpenGL4Renderer::Render(const double deltaTime)
 
 	for (auto entity : GameEntitites)
 	{
-		Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+		Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
+		Components::MeshComponent* meshComponent = entity->GetComponent<Components::MeshComponent>();
+
 		Renderer::OpenGL4Material* entityMaterial = static_cast<Renderer::OpenGL4Material*>(rendererComponent->GetPrimaryMaterial());
 
 		if (entity->IsStatic())
@@ -295,7 +302,7 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		assert(attributeVertexUV >= 0);
 		assert(uniformTextureSampler >= 0);
 
-		stride = rendererComponent->GetVertexBufferStride();
+		stride = meshComponent->GetVertexBufferStride();
 
 		glVertexAttribPointer(attributeVertexPosition, 3, GL_FLOAT, GL_FALSE, stride, 0); // X, Y, Z
 		glVertexAttribPointer(attributeVertexColor, 4, GL_FLOAT, GL_FALSE, stride, (GLvoid*)(3 * sizeof(GLfloat))); // R, G, B, A
@@ -324,7 +331,7 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		glUniform3fv(positionUniform, 1, (const GLfloat*)&entityMaterial->Transform.Position);
 		glUniform3fv(scaleUniform, 1, (const GLfloat*)&entityMaterial->Transform.Scale);
 
-		uint32 drawCount = rendererComponent->GetVerticies()->size();
+		uint32 drawCount = meshComponent->GetVerticies()->size();
 
 		if (entity->IsStatic())
 		{
@@ -470,7 +477,7 @@ void OpenGL4Renderer::CreateConstantBuffer(T* targetBuffer)
 
 void OpenGL4Renderer::CreateBuffersForEntity(Core::GameEntity* entity)
 {
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
 	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(rendererComponent->GetPrimaryMaterial());
 
 	glGenVertexArrays(1, &material->DynamicVertexArrayObject);
@@ -481,7 +488,7 @@ void OpenGL4Renderer::CreateBuffersForEntity(Core::GameEntity* entity)
 
 void OpenGL4Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 {
-	Components::RendererComponent* rendererComponent = entity->GetRendererComponent();
+	Components::RendererComponent* rendererComponent = entity->GetComponent<Components::RendererComponent>();
 	Renderer::OpenGL4Material* material = static_cast<Renderer::OpenGL4Material*>(rendererComponent->GetPrimaryMaterial());
 
 	std::string vertexShaderName = material->VertexShader + ".glsl";
@@ -511,3 +518,5 @@ void OpenGL4Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 	delete[] binary;
 #endif
 }
+
+#endif

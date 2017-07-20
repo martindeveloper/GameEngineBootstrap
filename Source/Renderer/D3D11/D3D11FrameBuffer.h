@@ -1,3 +1,5 @@
+#if RENDERER_DIRECTX11
+
 #pragma once
 
 #include "../../Common.h"
@@ -28,3 +30,5 @@ namespace Renderer
 		void CreateBuffer(ID3D11RenderTargetView** buffer);
 	};
 }
+
+#endif

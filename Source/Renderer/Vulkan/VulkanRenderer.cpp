@@ -1,3 +1,5 @@
+#if RENDERER_VULKAN
+
 #include "VulkanRenderer.h"
 
 using namespace Renderer;
@@ -146,3 +148,5 @@ void VulkanRenderer::Render(const double deltaTime)
 {
 
 }
+
+#endif

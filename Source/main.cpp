@@ -1,8 +1,12 @@
 #include "Common.h"
 
+#if RENDERER == RENDERER_OPENGL4
 #include "Renderer/OpenGL4/OpenGL4Renderer.h"
-//#include "Renderer/D3D11/D3D11Renderer.h"
-//#include "Renderer/Vulkan/VulkanRenderer.h"
+#elif RENDERER == RENDERER_VULKAN
+#include "Renderer/Vulkan/VulkanRenderer.h"
+#elif RENDERER == RENDERER_DIRECTX11
+#include "Renderer/D3D11/D3D11Renderer.h"
+#endif
 
 struct WindowProperties
 {
@@ -15,7 +19,7 @@ struct WindowProperties
 	// Custom
 	unsigned __int32 Width;
 	unsigned __int32 Height;
-	LPCSTR Title;
+	LPCWSTR Title;
 	bool IsFullscreen;
 	Renderer::IWindowRenderer* Renderer;
 };
@@ -25,9 +29,6 @@ int CreateWindowWithRenderer(WindowProperties properties, Renderer::IWindowRende
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 {
-	uint16_t num = 5;
-	bool isOdd = (1 & num);
-
 	WindowProperties windowProperties;
 	ZeroMemory(&windowProperties, sizeof(windowProperties));
 
@@ -38,7 +39,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	windowProperties.Width = 1024;
 	windowProperties.Height = 768;
-	windowProperties.Title = "OpenGL Window";
+	windowProperties.Title = TEXT("OpenGL Window");
 	windowProperties.IsFullscreen = false;
 	windowProperties.Renderer = new Renderer::OpenGL4Renderer();
 

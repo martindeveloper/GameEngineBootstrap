@@ -1,3 +1,5 @@
+#if RENDERER_DIRECTX11
+
 #include "D3D11FrameBuffer.h"
 
 using namespace Renderer;
@@ -48,3 +50,5 @@ void D3D11FrameBuffer::CreateBuffer(ID3D11RenderTargetView** buffer)
 
 	assert(!(FAILED(result)));
 }
+
+#endif

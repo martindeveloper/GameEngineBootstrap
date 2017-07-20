@@ -1,3 +1,5 @@
+#if RENDERER_OPENGL4
+
 #pragma once
 
 #include "../../Common.h"
@@ -53,3 +55,5 @@ namespace Renderer
 		};
 	};
 }
+
+#endif

@@ -15,7 +15,7 @@ Window::Window(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, in
 	QueryPerformanceCounter((LARGE_INTEGER*)&TimeBase);
 }
 
-int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFullscreen)
+int Window::Create(const int Width, const int Height, LPCWSTR Title, bool isFullscreen)
 {
 	WNDCLASSEX WindowClassHandle;
 	ZeroMemory(&WindowClassHandle, sizeof(WNDCLASSEX));
@@ -26,7 +26,7 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 	WindowClassHandle.hInstance = ApplicationInstance;
 	WindowClassHandle.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WindowClassHandle.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	WindowClassHandle.lpszClassName = "WindowsOpenGL";
+	WindowClassHandle.lpszClassName = TEXT("WindowsOpenGL");
 
 	RegisterClassEx(&WindowClassHandle);
 
@@ -53,7 +53,7 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 
 		if (ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
 		{
-			OutputDebugString("Can not create fullscreen window!");
+			OutputDebugString(TEXT("Can not create fullscreen window!"));
 			DebugBreak();
 
 			return ERROR_INVALID_FUNCTION;
@@ -63,7 +63,7 @@ int Window::Create(const int Width, const int Height, LPCSTR Title, bool isFulls
 		windowStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	}
 
-	WindowHandle = CreateWindowEx(windowExtendedStyle, "WindowsOpenGL", Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
+	WindowHandle = CreateWindowEx(windowExtendedStyle, TEXT("WindowsOpenGL"), Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
 
 	ShowWindow(WindowHandle, ShowStyle);
 

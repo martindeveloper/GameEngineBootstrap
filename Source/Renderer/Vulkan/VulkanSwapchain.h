@@ -1,3 +1,5 @@
+#if RENDERER_VULKAN
+
 #pragma once
 
 #include "../../Common.h"
@@ -28,3 +30,5 @@ namespace Renderer
 		void Initialize();
 	};
 }
+
+#endif

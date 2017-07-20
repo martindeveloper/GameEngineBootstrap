@@ -1,3 +1,5 @@
+#if RENDERER_DIRECTX11
+
 #pragma once
 
 #include "../../Common.h"
@@ -34,3 +36,5 @@ namespace Renderer
 		ID3D11InputLayout* InputLayout;
 	};
 }
+
+#endif

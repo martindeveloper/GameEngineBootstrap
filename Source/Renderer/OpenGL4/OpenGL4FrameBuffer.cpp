@@ -1,3 +1,5 @@
+#if RENDERER_OPENGL4
+
 #include "OpenGL4FrameBuffer.h"
 
 using namespace Renderer;
@@ -126,3 +128,5 @@ void OpenGL4FrameBuffer::PrepareScreenQuad()
 
 	assert(glGetError() == GL_NO_ERROR);
 }
+
+#endif

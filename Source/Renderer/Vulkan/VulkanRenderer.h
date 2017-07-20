@@ -1,5 +1,6 @@
+#if RENDERER_VULKAN
+
 #pragma once
-#define VULKAN_SDK_VERSION "1.0.24.0"
 
 #include "../../Common.h"
 
@@ -20,9 +21,6 @@
 #include <vulkan/vulkan.h>
 
 #include "VulkanSwapchain.h"
-
-// Libraries
-#pragma comment (lib, "vulkan-1.lib")
 
 #define VK_VER_MAJOR(X) ((((uint32)(X))>>22)&0x3FF)
 #define VK_VER_MINOR(X) ((((uint32)(X))>>12)&0x3FF)
@@ -71,3 +69,5 @@ namespace Renderer
 		void PrepareBuffers() override {};
 	};
 }
+
+#endif
