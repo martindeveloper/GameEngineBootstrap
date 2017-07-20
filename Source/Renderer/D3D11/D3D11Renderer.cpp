@@ -122,6 +122,8 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 			assert(!(FAILED(result)));
 
 			CreateShaderForEntity(entity);
+
+			UploadTexture(entity, meshComponent->GetTexture(Components::TextureSlot::TEXTURE_DIFFUSE_SLOT));
 		}
 	}
 
@@ -435,8 +437,8 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 
 	Renderer::Material* material = rendererComponent->GetPrimaryMaterial();
 
-	std::string vertexShaderName = "Shaders/" + material->VertexShader + ".cso";
-	std::string pixelShaderName = "Shaders/" + material->PixelShader + ".cso";
+	std::string vertexShaderName = material->VertexShader + ".cso";
+	std::string pixelShaderName = material->PixelShader + ".cso";
 
 	D3D11Material* d3d11Material = static_cast<D3D11Material*>(material);
 

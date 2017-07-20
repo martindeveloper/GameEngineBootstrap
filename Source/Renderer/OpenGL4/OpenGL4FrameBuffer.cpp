@@ -7,6 +7,7 @@ using namespace Renderer;
 OpenGL4FrameBuffer::OpenGL4FrameBuffer(Renderer::OpenGL4Renderer* renderer)
 {
 	Renderer = renderer;
+	ScreenShaderProgramId = 0;
 }
 
 OpenGL4FrameBuffer::~OpenGL4FrameBuffer()
@@ -82,7 +83,7 @@ void OpenGL4FrameBuffer::CreateBuffer()
 
 void OpenGL4FrameBuffer::SwitchProstProcessEffect(const char* vertexShaderName, const char* fragmentShaderName)
 {
-	if (ScreenShaderProgramId >= 0)
+	if (ScreenShaderProgramId > 0)
 	{
 		glDeleteProgram(ScreenShaderProgramId);
 	}
@@ -125,8 +126,10 @@ void OpenGL4FrameBuffer::PrepareScreenQuad()
 
 	glUseProgram(ScreenShaderProgramId);
 	glUniform1i(glGetUniformLocation(ScreenShaderProgramId, "frameBufferTextureSampler"), 0);
+	
+	GLint error = glGetError();
 
-	assert(glGetError() == GL_NO_ERROR);
+	assert(error == GL_NO_ERROR);
 }
 
 #endif

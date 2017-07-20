@@ -88,7 +88,13 @@ void OpenGL4Renderer::BeforeStart(HDC windowDeviceContext, const bool isWindowed
 	BOOL isTempContextDeleted = wglDeleteContext(FakeOpenGLRenderingContextHandle);
 	BOOL isContextActive = wglMakeCurrent(windowDeviceContext, OpenGLRenderingContextHandle);
 
+	GLint error = glGetError(); // TODO(martin.pernica): Remove this calls and replace it with some macro
+	assert(error == GL_NO_ERROR);
+
 	PrepareBuffers();
+	
+	error = glGetError();
+	assert(error == GL_NO_ERROR);
 
 	{
 		// Cube entity
@@ -145,6 +151,8 @@ void OpenGL4Renderer::LoadStaticEntities()
 
 		glBufferSubData(GL_ARRAY_BUFFER, bufferOffset, width, &verticies->at(0));
 
+		UploadTexture(entity, meshComponent->GetTexture(Components::TextureSlot::TEXTURE_DIFFUSE_SLOT));
+
 		bufferOffset += width;
 	}
 
@@ -177,6 +185,8 @@ void OpenGL4Renderer::LoadDynamicEntities()
 		glBindBuffer(GL_ARRAY_BUFFER, material->DynamicVertexBuffer);
 
 		glBufferData(GL_ARRAY_BUFFER, meshComponent->GetVertexBufferWidth(), &verticies->at(0), GL_DYNAMIC_DRAW);
+		
+		UploadTexture(entity, meshComponent->GetTexture(Components::TextureSlot::TEXTURE_DIFFUSE_SLOT));
 
 		CreateShaderForEntity(entity);
 	}
@@ -209,6 +219,9 @@ void OpenGL4Renderer::UploadTexture(Core::GameEntity* entity, Image::Image* imag
 	image->Free();
 
 	material->DiffuseTextureId = textureID;
+
+	GLint error = glGetError();
+	assert(error == GL_NO_ERROR);
 }
 
 void OpenGL4Renderer::ClearWindow(const double deltaTime)
@@ -388,6 +401,7 @@ GLint OpenGL4Renderer::CompileShader(const char* path, GLenum type)
 		const char* error = "Can not load shader file";
 		std::cout << error << std::endl;
 		OutputDebugStringA(error);
+		DebugBreak();
 
 		return shaderID;
 	}
@@ -414,6 +428,7 @@ GLint OpenGL4Renderer::CompileShader(const char* path, GLenum type)
 		// Output debug message
 		std::cout << "Shader #" << shaderID << " compilation result: " << &shaderErrorMessage[0] << std::endl;
 		OutputDebugStringA(&shaderErrorMessage[0]);
+		DebugBreak();
 	}
 	
 	return shaderID;

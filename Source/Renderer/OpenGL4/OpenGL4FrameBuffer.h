@@ -14,11 +14,11 @@ namespace Renderer
 	{
 	public:
 		// TODO(martin.pernica): Use data struct for this pairs
-		const char* PostProcessDefaultVertex = "ScreenVertex.glsl";
-		const char* PostProcessDefaultFragment = "ScreenFragment.glsl";
+		const char* PostProcessDefaultVertex = "Shaders/ScreenVertex.glsl";
+		const char* PostProcessDefaultFragment = "Shaders/ScreenFragment.glsl";
 
-		const char* PostProcessBlurVertex = "ScreenVertex.glsl";
-		const char* PostProcessBlurFragment = "ScreenBlurFragment.glsl";
+		const char* PostProcessBlurVertex = "Shaders/ScreenVertex.glsl";
+		const char* PostProcessBlurFragment = "Shaders/ScreenBlurFragment.glsl";
 
 		OpenGL4FrameBuffer(Renderer::OpenGL4Renderer* renderer);
 		virtual ~OpenGL4FrameBuffer();

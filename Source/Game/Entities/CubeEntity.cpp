@@ -12,8 +12,8 @@ void CubeEntity::OnLoad()
 	// NOTE(martin.pernica): Currently every material is deleted by renderer.
 	//                       Maybe it would be better delete it in entity itself
 	Renderer::Material* primaryMaterial = Renderer->CreateMaterial();
-	primaryMaterial->VertexShader = "RotationVertex";
-	primaryMaterial->PixelShader = "SolidColorFragment";
+	primaryMaterial->VertexShader = "Shaders/Rotation.vertex";
+	primaryMaterial->PixelShader = "Shaders/SolidColor.fragment";
 	primaryMaterial->Transform = { StartingPosition,{ 0.5f, 0.5f, 0.5f } };
 
 	// Renderer Component
