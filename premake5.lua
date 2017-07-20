@@ -13,6 +13,14 @@ function vulkan_get_path()
    return vulkan_windows_root .. "/" .. vulkan_version .. "/"
 end
 
+function glew_get_path()
+   return "External/glew/"
+end
+
+function shaders_get_path()
+   return "Source/Shaders/"
+end
+
 workspace "GameEngineBootstrap"
    configurations { "Debug", "Release" }
    location "ProjectFiles/"
@@ -28,13 +36,14 @@ workspace "GameEngineBootstrap"
    if renderer_target == Renderers.OpenGL4 then
       links { "opengl32", "glu32", "glew32s" }
       defines { "RENDERER=RENDERER_OPENGL4", "RENDERER_OPENGL4=1", "GLEW_STATIC" }
-      includedirs { "External/glew/inc/" }
-      files { "Source/Shaders/**.glsl" }
+      includedirs { glew_get_path() .. "inc/" }
+      files { shaders_get_path() .. "**.glsl" }
    end
 
    if renderer_target == Renderers.DirectX11 then
+      links { "d3d11", "D3DCompiler" }
       defines { "RENDERER=RENDERER_DIRECTX11", "RENDERER_DIRECTX11=1" }
-      files { "Source/Shaders/**.hlsl" }
+      files { shaders_get_path() .. "**.hlsl" }
    end
 
    filter "platforms:Win32"
@@ -46,7 +55,7 @@ workspace "GameEngineBootstrap"
       end
       
       if renderer_target == Renderers.OpenGL4 then
-         libdirs { "External/glew/lib/Win32" }
+         libdirs { glew_get_path() .. "lib/Win32" }
       end
 
    filter "platforms:Win64"
@@ -58,7 +67,7 @@ workspace "GameEngineBootstrap"
       end
       
       if renderer_target == Renderers.OpenGL4 then
-         libdirs { "External/glew/lib/x64" }
+         libdirs { glew_get_path() .. "lib/x64" }
       end
 
 project "GameEngineBootstrap"
