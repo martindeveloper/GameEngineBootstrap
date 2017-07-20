@@ -23,11 +23,11 @@ void CubeEntity::OnLoad()
 	// Mesh Component
 	Components::MeshComponent* meshComponent = AttachComponent<Components::MeshComponent>();
 
-	bool isMeshLoaded = meshComponent->SetMesh("CubeModel.obj");
+	bool isMeshLoaded = meshComponent->SetMesh("Resources/CubeModel.obj");
 
 	assert(isMeshLoaded == true);
 
-	meshComponent->SetTexture("lenaColor512A.bmp", Components::TextureSlot::TEXTURE_DIFFUSE_SLOT);
+	meshComponent->SetTexture("Resources/lenaColor512A.bmp", Components::TextureSlot::TEXTURE_DIFFUSE_SLOT);
 }
 
 void CubeEntity::OnUpdate(double deltaTime)

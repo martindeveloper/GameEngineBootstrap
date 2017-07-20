@@ -319,7 +319,7 @@ void D3D11Renderer::Render(const double deltaTime)
 		DeviceContext->PSSetShaderResources(0, 1, &material->DiffuseTexture);
 
 		// Draw
-		DeviceContext->Draw(meshComponent->GetVerticies()->size(), 0);
+		DeviceContext->Draw(static_cast<UINT>(meshComponent->GetVerticies()->size()), 0);
 	}
 
 	FrameBuffer->Unbind();
@@ -435,8 +435,8 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 
 	Renderer::Material* material = rendererComponent->GetPrimaryMaterial();
 
-	std::string vertexShaderName = material->VertexShader + ".cso";
-	std::string pixelShaderName = material->PixelShader + ".cso";
+	std::string vertexShaderName = "Shaders/" + material->VertexShader + ".cso";
+	std::string pixelShaderName = "Shaders/" + material->PixelShader + ".cso";
 
 	D3D11Material* d3d11Material = static_cast<D3D11Material*>(material);
 

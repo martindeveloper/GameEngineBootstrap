@@ -4,7 +4,7 @@ local Renderers = {
   Vulkan = {}
 }
 
-local renderer_target = Renderers.OpenGL4;
+local renderer_target = Renderers.DirectX11;
 
 function vulkan_get_path()
    local vulkan_version = "1.0.54.0"
@@ -74,10 +74,11 @@ project "GameEngineBootstrap"
    kind "WindowedApp"
    language "C++"
    characterset "Unicode"
-   flags{ "WinMain" }
+   flags { "WinMain" }
 
-   targetdir "Binaries/%{cfg.platform}-%{cfg.architecture}/%{cfg.buildcfg}"
-   objdir "Intermediate/%{cfg.platform}-%{cfg.architecture}/%{cfg.buildcfg}"
+   targetdir "Binaries/%{cfg.platform}/%{cfg.buildcfg}"
+   objdir "Intermediate/%{cfg.platform}/%{cfg.buildcfg}"
+   debugdir "Binaries/%{cfg.platform}/%{cfg.buildcfg}"
 
    files { "Source/**.h", "Source/**.cpp" }
 
