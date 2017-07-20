@@ -113,7 +113,7 @@ int Window::Create(const int Width, const int Height, LPCWSTR Title, bool isFull
 		}
 	}
 
-	return Message.wParam;
+	return 0;
 }
 
 LRESULT CALLBACK Window::StaticMessageLoopCallback(HWND WindowHandle, UINT Message, WPARAM wParam, LPARAM lParam)

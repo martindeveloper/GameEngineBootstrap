@@ -331,7 +331,7 @@ void OpenGL4Renderer::Render(const double deltaTime)
 		glUniform3fv(positionUniform, 1, (const GLfloat*)&entityMaterial->Transform.Position);
 		glUniform3fv(scaleUniform, 1, (const GLfloat*)&entityMaterial->Transform.Scale);
 
-		uint32 drawCount = meshComponent->GetVerticies()->size();
+		uint32 drawCount = static_cast<uint32>(meshComponent->GetVerticies()->size());
 
 		if (entity->IsStatic())
 		{

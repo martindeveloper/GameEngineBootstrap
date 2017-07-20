@@ -21,7 +21,7 @@ bool ObjModel::Load()
 		std::vector<char>* dataVector = Source->GetBinaryContentPointer();
 
 		uint32 bytesRead = 0;
-		uint32 bytesMax = dataVector->size();
+		uint32 bytesMax = static_cast<uint32>(dataVector->size());
 
 		char lineBuffer[128];
 		uint32 index = 0;

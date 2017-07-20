@@ -32,5 +32,5 @@ void CubeEntity::OnLoad()
 
 void CubeEntity::OnUpdate(double deltaTime)
 {
-	GetComponent<Components::RendererComponent>()->GetPrimaryMaterial()->Transform.Position.X += sin(deltaTime) / 1000;
+	GetComponent<Components::RendererComponent>()->GetPrimaryMaterial()->Transform.Position.X += static_cast<float>(sin(deltaTime) / 1000.0);
 }

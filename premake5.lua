@@ -29,10 +29,12 @@ workspace "GameEngineBootstrap"
       links { "opengl32", "glu32", "glew32s" }
       defines { "RENDERER=RENDERER_OPENGL4", "RENDERER_OPENGL4=1", "GLEW_STATIC" }
       includedirs { "External/glew/inc/" }
+      files { "Source/Shaders/**.glsl" }
    end
 
    if renderer_target == Renderers.DirectX11 then
       defines { "RENDERER=RENDERER_DIRECTX11", "RENDERER_DIRECTX11=1" }
+      files { "Source/Shaders/**.hlsl" }
    end
 
    filter "platforms:Win32"

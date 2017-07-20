@@ -56,7 +56,7 @@ std::vector<Graphic::Vertex>* Components::MeshComponent::GetVerticies() const
 
 uint32 Components::MeshComponent::GetVertexBufferWidth() const
 {
-	static const uint32 vertexBufferWidth = sizeof(Graphic::Vertex) * Mesh->Vertices.size();
+	static const uint32 vertexBufferWidth = static_cast<const uint32>(sizeof(Graphic::Vertex) * Mesh->Vertices.size());
 
 	return vertexBufferWidth;
 }
