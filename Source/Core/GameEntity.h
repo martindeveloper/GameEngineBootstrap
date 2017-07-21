@@ -11,7 +11,7 @@ namespace Renderer
 	class Material;
 }
 
-typedef std::map<const char*, Components::IComponent*> ComponentsMap;
+typedef std::unordered_map<const char*, Components::IComponent*> ComponentsMap;
 
 namespace Core
 {
