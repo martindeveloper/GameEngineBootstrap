@@ -43,4 +43,9 @@
 #include "Window.h"
 
 #undef TEXT
+
+#if defined(__clang__) && defined(__c2__)
+#define TEXT(string) #string
+#else
 #define TEXT(string) L#string
+#endif
