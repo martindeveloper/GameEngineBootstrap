@@ -1,8 +1,21 @@
 function vulkan_get_path()
-   local vulkan_version = "1.0.54.0"
+   local vulkan_version = "1.0.68.0"
    local vulkan_windows_root = "C:/VulkanSDK"
 
    return vulkan_windows_root .. "/" .. vulkan_version .. "/"
+end
+
+function d3d11_compile_shader_command(shader)
+   command = 'fxc.exe '
+   command = command .. '"' .. shader.source_path .. '" '
+   command = command .. '/nologo /T ' .. shader.target_profile .. ' /Fo "%{cfg.targetdir}/' .. shaders_get_output_path() .. '/%{file.basename}.cso" '
+   command = command .. '/O' .. shader.optimizations_level .. ' '
+
+   if shader.debug_enabled then
+      command = command .. '/Zi '
+    end
+
+   return command
 end
 
 function glew_get_path()
@@ -13,14 +26,18 @@ function shaders_get_path()
    return "Source/Shaders/"
 end
 
+function shaders_get_output_path()
+   return "Shaders/"
+end
+
 newoption {
    trigger = "renderer",
    value = "API",
    description = "Choose a particular 3D API for rendering",
    allowed = {
-      { "opengl",    "OpenGL 4" },
-      { "d3d11",  "Direct3D 11" },
-      { "vulkan",  "Vulkan" }
+      { "opengl", "OpenGL 4" },
+      { "d3d11", "Direct3D 11" },
+      { "vulkan", "Vulkan" }
    }
 }
 
@@ -46,6 +63,46 @@ workspace "GameEngineBootstrap"
       defines { "RENDERER=RENDERER_DIRECTX11", "RENDERER_DIRECTX11=1" }
       files { shaders_get_path() .. "**.hlsl" }
 
+      -- Compile HLSL shaders
+      --    .vs.hlsl Vertex Shader
+      --    .ps.hlsl Pixel Shader
+      --    .gs.hlsl Geometry Shader
+      filter 'files:**.vs.hlsl'
+         buildmessage 'Compiling vertex shader %{file.relpath}'
+
+         buildcommands {
+            d3d11_compile_shader_command({
+               source_path = "%{file.relpath}",
+               target_profile = "vs_5_0",
+               optimizations_level = 3,
+               debug_enabled = true
+            })
+         }
+
+         cleancommands {
+            'rm %{cfg.targetdir}/' .. shaders_get_output_path() .. '/%{file.basename}.cso'
+         }
+
+         buildoutputs { '%{cfg.targetdir}/%{file.basename}.cso' }
+
+      filter 'files:**.ps.hlsl'
+         buildmessage 'Compiling pixel shader %{file.relpath}'
+
+         buildcommands {
+            d3d11_compile_shader_command({
+               source_path = "%{file.relpath}",
+               target_profile = "ps_5_0",
+               optimizations_level = 3,
+               debug_enabled = true
+            })
+         }
+
+         cleancommands {
+            'rm %{cfg.targetdir}/' .. shaders_get_output_path() .. '/%{file.basename}.cso'
+         }
+
+         buildoutputs { '%{cfg.targetdir}/%{file.basename}.cso' }
+
    filter "platforms:Win32"
       system "Windows"
       architecture "x32"
@@ -70,7 +127,8 @@ project "GameEngineBootstrap"
    kind "WindowedApp"
    language "C++"
    characterset "Unicode"
-   flags { "WinMain" }
+   entrypoint "WinMainCRTStartup"
+   flags { }
    toolset "v141"
 
    targetdir "Binaries/%{cfg.platform}/%{cfg.buildcfg}"
@@ -78,6 +136,14 @@ project "GameEngineBootstrap"
    debugdir "Binaries/%{cfg.platform}/%{cfg.buildcfg}"
 
    files { "Source/**.h", "Source/**.cpp" }
+
+   prebuildcommands {
+      "{MKDIR} %{cfg.targetdir}/Shaders/"
+   }
+
+   postbuildcommands {
+      "{COPY} %{prj.location}/../Resources/ %{cfg.targetdir}/Resources/"
+   }
 
    filter "configurations:Debug"
       defines { "DEBUG" }

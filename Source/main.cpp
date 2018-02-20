@@ -39,7 +39,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	windowProperties.Width = 1024;
 	windowProperties.Height = 768;
-	windowProperties.Title = TEXT("OpenGL Window");
+	windowProperties.Title = TEXT("Window");
 	windowProperties.IsFullscreen = false;
 
 #if RENDERER == RENDERER_OPENGL4

@@ -444,6 +444,13 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 
 	// Vertex
 	FileSystem::File vertexShaderFile(vertexShaderName.c_str());
+
+	if (!vertexShaderFile.IsExists()) {
+		Log::Write("D3D11Renderer", "Failed to load vertex shader file %s", Log::Severity::Critical, vertexShaderName.c_str());
+		assert(vertexShaderFile.IsExists());
+		std::exit(-1);
+	}
+
 	vertexShaderFile.Load();
 
 	std::vector<char> vertexShaderBytes = vertexShaderFile.GetBinaryContent();
