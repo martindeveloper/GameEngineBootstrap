@@ -398,10 +398,8 @@ GLint OpenGL4Renderer::CompileShader(const char* path, GLenum type)
 
 	if (!file.IsExists())
 	{
-		const char* error = "Can not load shader file";
-		std::cout << error << std::endl;
-		OutputDebugStringA(error);
-		DebugBreak();
+		Log::Write("OpenGL4Renderer", "Can not load shader file on path %s as type %u", Log::Severity::Critical, path, type);
+		assert(file.IsExists());
 
 		return shaderID;
 	}
@@ -426,9 +424,8 @@ GLint OpenGL4Renderer::CompileShader(const char* path, GLenum type)
 		glGetShaderInfoLog(shaderID, compilationLogLength, NULL, &shaderErrorMessage[0]);
 
 		// Output debug message
-		std::cout << "Shader #" << shaderID << " compilation result: " << &shaderErrorMessage[0] << std::endl;
-		OutputDebugStringA(&shaderErrorMessage[0]);
-		DebugBreak();
+		Log::Write("OpenGL4Renderer", "Shader #%s compilation result: &s", Log::Severity::Critical, shaderID, &shaderErrorMessage[0]);
+		assert(compilationResult != GL_TRUE);
 	}
 	
 	return shaderID;

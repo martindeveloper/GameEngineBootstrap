@@ -67,7 +67,9 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 	flags |= D3D11_CREATE_DEVICE_DEBUG; 
 	flags |= D3D11_RLDO_DETAIL;
 
-	D3D11CreateDeviceAndSwapChain(NULL,
+	HRESULT result = S_OK;
+
+	result = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		flags,
@@ -80,7 +82,7 @@ void D3D11Renderer::BeforeStart(HDC WindowDeviceContext, const bool isWindowed)
 		NULL,
 		&DeviceContext);
 
-	HRESULT result = S_OK;
+	assert(!(FAILED(result)));
 
 	// Create and set viewport
 	D3D11_VIEWPORT viewport = { 0, 0, (float)Parameters.Width, (float)Parameters.Height, 0.0f, 1.0f };
@@ -446,28 +448,43 @@ void D3D11Renderer::CreateShaderForEntity(Core::GameEntity* entity)
 	FileSystem::File vertexShaderFile(vertexShaderName.c_str());
 
 	if (!vertexShaderFile.IsExists()) {
-		Log::Write("D3D11Renderer", "Failed to load vertex shader file %s", Log::Severity::Critical, vertexShaderName.c_str());
+		Log::Write("D3D11Renderer", "Failed to load vertex shader file %s for entity %s", Log::Severity::Critical, vertexShaderName.c_str(), entity->Name);
+		
 		assert(vertexShaderFile.IsExists());
+
 		std::exit(-1);
 	}
 
 	vertexShaderFile.Load();
 
-	std::vector<char> vertexShaderBytes = vertexShaderFile.GetBinaryContent();
-	size_t vertexShaderBytesSize = vertexShaderBytes.size() * sizeof(char);
-	const char* vertexShaderBytesPointer = &vertexShaderBytes[0];
+	std::vector<char>* vertexShaderBytes = vertexShaderFile.GetBinaryContentPointer();
+	size_t vertexShaderBytesSize = vertexShaderBytes->size() * sizeof(char);
+	const char* vertexShaderBytesPointer = &(vertexShaderBytes->at(0));
 
 	result = Device->CreateVertexShader(vertexShaderBytesPointer, vertexShaderBytesSize, nullptr, &d3d11Material->VertexShader);
 
+	assert(!(FAILED(result)));
+
 	// Pixel shader
 	FileSystem::File pixelShaderFile(pixelShaderName.c_str());
+
+	if (!pixelShaderFile.IsExists()) {
+		Log::Write("D3D11Renderer", "Failed to load pixel shader file %s for entity %s", Log::Severity::Critical, pixelShaderName.c_str(), entity->Name);
+
+		assert(vertexShaderFile.IsExists());
+
+		std::exit(-1);
+	}
+
 	pixelShaderFile.Load();
 
-	std::vector<char> pixelShaderBytes = pixelShaderFile.GetBinaryContent();
-	size_t pixelShaderBytesSize = pixelShaderBytes.size() * sizeof(char);
-	const char* pixelShaderBytesPointer = &pixelShaderBytes[0];
+	std::vector<char>* pixelShaderBytes = pixelShaderFile.GetBinaryContentPointer();
+	size_t pixelShaderBytesSize = pixelShaderBytes->size() * sizeof(char);
+	const char* pixelShaderBytesPointer = &(pixelShaderBytes->at(0));
 
 	result = Device->CreatePixelShader(pixelShaderBytesPointer, pixelShaderBytesSize, nullptr, &d3d11Material->PixelShader);
+
+	assert(!(FAILED(result)));
 
 	// Input layout
 	const D3D11_INPUT_ELEMENT_DESC inputElementDescription[] =

@@ -25,7 +25,7 @@ namespace Renderer
 {
 	class OpenGL4FrameBuffer;
 
-	class OpenGL4Renderer : public IWindowRenderer
+	class alignas(16) OpenGL4Renderer : public IWindowRenderer
 	{
 	public:
 		OpenGL4Renderer();

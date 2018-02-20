@@ -58,6 +58,10 @@ workspace "GameEngineBootstrap"
       includedirs { glew_get_path() .. "inc/" }
       files { shaders_get_path() .. "**.glsl" }
 
+      prebuildcommands {
+         '{COPY} %{prj.location}/../Source/Shaders/GLSL/ %{cfg.targetdir}/' .. shaders_get_output_path()
+      }
+
    filter "options:renderer=d3d11"
       links { "d3d11", "D3DCompiler" }
       defines { "RENDERER=RENDERER_DIRECTX11", "RENDERER_DIRECTX11=1" }
@@ -105,23 +109,11 @@ workspace "GameEngineBootstrap"
 
    filter "platforms:Win32"
       system "Windows"
-      architecture "x32"
-
-      filter "options:renderer=vulkan"
-         libdirs { vulkan_get_path() .. "Lib32" }
-
-      filter "options:renderer=opengl"
-         libdirs { glew_get_path() .. "lib/Win32" }
+      architecture "x86"
 
    filter "platforms:Win64"
       system "Windows"
-      architecture "x64"
-
-      filter "options:renderer=vulkan"
-         libdirs { vulkan_get_path() .. "Lib" }
-
-      filter "options:renderer=opengl"
-         libdirs { glew_get_path() .. "lib/x64" }
+      architecture "x86_64"
 
 project "GameEngineBootstrap"
    kind "WindowedApp"
@@ -144,6 +136,20 @@ project "GameEngineBootstrap"
    postbuildcommands {
       "{COPY} %{prj.location}/../Resources/ %{cfg.targetdir}/Resources/"
    }
+
+   filter "options:renderer=vulkan"
+      filter "platforms:Win64"
+         libdirs { vulkan_get_path() .. "Lib" }
+
+      filter "platforms:Win32"
+         libdirs { vulkan_get_path() .. "Lib32" }
+
+   filter "options:renderer=opengl"
+      filter "platforms:Win64"
+         libdirs { glew_get_path() .. "lib/Win64" }
+
+      filter "platforms:Win32"
+         libdirs { glew_get_path() .. "lib/Win32" }
 
    filter "configurations:Debug"
       defines { "DEBUG" }

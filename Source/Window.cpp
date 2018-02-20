@@ -20,13 +20,15 @@ int Window::Create(const int Width, const int Height, LPCWSTR Title, bool isFull
 	WNDCLASSEX WindowClassHandle;
 	ZeroMemory(&WindowClassHandle, sizeof(WNDCLASSEX));
 
+	LPCWSTR windowClassName = TEXT("GameEngineBootstrap");
+
 	WindowClassHandle.cbSize = sizeof(WNDCLASSEX);
 	WindowClassHandle.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	WindowClassHandle.lpfnWndProc = Window::StaticMessageLoopCallback;
 	WindowClassHandle.hInstance = ApplicationInstance;
 	WindowClassHandle.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WindowClassHandle.hbrBackground = (HBRUSH)COLOR_WINDOW;
-	WindowClassHandle.lpszClassName = TEXT("WindowsOpenGL");
+	WindowClassHandle.lpszClassName = windowClassName;
 
 	RegisterClassEx(&WindowClassHandle);
 
@@ -63,7 +65,7 @@ int Window::Create(const int Width, const int Height, LPCWSTR Title, bool isFull
 		windowStyle = WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	}
 
-	WindowHandle = CreateWindowEx(windowExtendedStyle, TEXT("WindowsOpenGL"), Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
+	WindowHandle = CreateWindowEx(windowExtendedStyle, windowClassName, Title, windowStyle, WindowX, WindowY, Width, Height, NULL, NULL, ApplicationInstance, NULL);
 
 	ShowWindow(WindowHandle, ShowStyle);
 
